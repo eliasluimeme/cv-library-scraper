@@ -1,0 +1,27 @@
+# Core web scraping dependencies
+selenium==4.15.2
+beautifulsoup4==4.12.2
+requests==2.31.0
+
+# Data processing and management - Updated for Python 3.13 compatibility
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Configuration management
+python-dotenv==1.0.0
+PyYAML==6.0.1
+
+# Logging and utilities
+colorama==0.4.6
+tqdm==4.66.1
+
+# Optional: For better HTTP handling
+urllib3==2.0.7
+certifi==2023.7.22
+
+# Development and testing (optional)
+pytest==7.4.3
+pytest-mock==3.12.0
+
+# WebDriver management
+webdriver-manager==4.0.1 

@@ -1,0 +1,28 @@
+# CV-Library Credentials
+CV_LIBRARY_USERNAME=your_username_here
+CV_LIBRARY_PASSWORD=your_password_here
+
+# Download Configuration
+DOWNLOAD_PATH=./downloaded_cvs/
+MAX_DOWNLOADS_PER_SESSION=50
+DELAY_MIN_SECONDS=2
+DELAY_MAX_SECONDS=5
+
+# Browser Configuration
+BROWSER=chrome
+HEADLESS=true
+BROWSER_TIMEOUT=30
+
+# Logging Configuration
+LOG_LEVEL=INFO
+LOG_TO_FILE=true
+LOG_PATH=./logs/
+
+# Rate Limiting
+REQUESTS_PER_MINUTE=10
+EXPONENTIAL_BACKOFF=true
+
+# Session Management
+SESSION_TIMEOUT=3600
+SAVE_SESSION=true
+SESSION_PATH=./sessions/ 

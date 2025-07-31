@@ -1,0 +1,41 @@
+search_criteria:
+  keywords:
+    - "Python developer"
+    - "Data scientist"
+    - "DevOps engineer"
+    - "Software engineer"
+    - "Full stack developer"
+  locations:
+    - "London"
+    - "Manchester"
+    - "Birmingham"
+    - "Edinburgh"
+    - "Remote"
+  salary_range:
+    min: 30000
+    max: 80000
+  experience_level: "mid-level"
+  job_type: "permanent"
+  
+download_settings:
+  max_quantity: 10
+  file_formats: ["pdf", "doc", "docx"]
+  organize_by_keywords: true
+  organize_by_date: true
+  skip_duplicates: true
+  
+scraping_settings:
+  delay_between_requests:
+    min: 2
+    max: 5
+  page_load_timeout: 30
+  max_retries: 3
+  respect_robots_txt: true
+  
+browser_settings:
+  browser_type: "chrome"
+  headless: true
+  window_size:
+    width: 1920
+    height: 1080
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" 
