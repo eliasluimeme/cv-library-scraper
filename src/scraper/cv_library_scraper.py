@@ -253,6 +253,10 @@ class CVLibraryScraper:
             
             downloaded_cvs = self.download_cvs(search_results, target_downloads)
             
+            # Phase 4: Final wait to ensure all downloads are completely finished
+            self.logger.info("Phase 4: Ensuring all downloads are complete...")
+            time.sleep(3)  # Final wait to ensure all file operations are complete
+            
             results['download_results'] = {
                 'successful_downloads': len(downloaded_cvs),
                 'failed_downloads': len(search_results.results) - len(downloaded_cvs),

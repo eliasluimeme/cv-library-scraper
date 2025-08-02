@@ -85,6 +85,22 @@ class AuthenticationManager:
             True if successful, False otherwise
         """
         try:
+            # Check if we already have a working driver
+            if self.driver:
+                try:
+                    # Test if the existing driver is still responsive
+                    self.driver.current_url
+                    self.logger.info("Reusing existing WebDriver instance")
+                    return True
+                except Exception as e:
+                    self.logger.info(f"Existing WebDriver not responsive: {e}, creating new one")
+                    # Close the old driver properly
+                    try:
+                        self.driver.quit()
+                    except:
+                        pass
+                    self.driver = None
+            
             # Load session metadata silently
             session_metadata = self.profile_manager.load_session_metadata()
             

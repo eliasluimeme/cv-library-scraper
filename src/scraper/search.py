@@ -39,21 +39,21 @@ class SearchManager:
     JOB_TYPE_SELECTOR = "select[name='job_type'], #job_type, .job-type"
     INDUSTRY_SELECTOR = "select[name='industry'], #industry, .industry"
     MINIMUM_MATCH_SELECTOR = "select[name='minimum_match'], #minimum_match, .minimum-match"
-    SEARCH_BUTTON_SELECTOR = "button:contains('View results'), input[value*='View results'], .search-btn, button[type='submit']"
+    SEARCH_BUTTON_SELECTOR = "button[type='submit'], input[type='submit'], .search-btn, button.btn-primary"
     
     # Results page selectors (updated for actual CV-Library structure)
-    RESULTS_CONTAINER_SELECTOR = ".search-result, .candidate-result"  # Direct selector for individual results
-    RESULT_ITEM_SELECTOR = ".search-result"  # The actual class used by CV-Library
+    RESULTS_CONTAINER_SELECTOR = ".search-result, .candidate-result, .result-row, tr"
+    RESULT_ITEM_SELECTOR = ".search-result, .candidate-result, .result-row, tbody tr"
     
-    # Individual result selectors (updated for CV-Library structure)
-    CV_TITLE_SELECTOR = "h3 a, .candidate-name a, .result-title a"
+    # Individual result selectors (cleaned up for CV-Library structure)
+    CV_TITLE_SELECTOR = "h3 a, .candidate-name a, .result-title a, td a[href*='/cv/']"
     CV_LINK_SELECTOR = "a[href*='/cv/'], .view-cv, .candidate-name a"
-    CANDIDATE_NAME_SELECTOR = "h3, .candidate-name, .result-title"
-    LOCATION_RESULT_SELECTOR = ".location, .candidate-location, td:contains('Location')"
-    SALARY_RESULT_SELECTOR = ".salary, .candidate-salary, td:contains('Salary')"
-    EXPERIENCE_SELECTOR = ".experience, .years-exp, td:contains('Willing to Travel')"
-    SKILLS_SELECTOR = ".skills, .key-skills, .job-title"
-    SUMMARY_SELECTOR = ".summary, .profile, .description"
+    CANDIDATE_NAME_SELECTOR = "h3, .candidate-name, .result-title, td:first-child"
+    LOCATION_RESULT_SELECTOR = ".location, .candidate-location, td:nth-child(2)"
+    SALARY_RESULT_SELECTOR = ".salary, .candidate-salary, td:nth-child(3)"
+    EXPERIENCE_SELECTOR = ".experience, .years-exp, td:nth-child(4)"
+    SKILLS_SELECTOR = ".skills, .key-skills, .job-title, td:nth-child(5)"
+    SUMMARY_SELECTOR = ".summary, .profile, .description, td:last-child"
     
     # Pagination selectors
     PAGINATION_CONTAINER_SELECTOR = ".pagination, .pager, .page-nav"
@@ -176,7 +176,92 @@ class SearchManager:
             self.rate_limiter.on_error()
             return False
     
-    def find_search_form_elements(self) -> Dict[str, Any]:
+    def _dismiss_modals(self) -> bool:
+        """
+        Dismiss any modal dialogs that might be blocking form interaction.
+        
+        Returns:
+            True if any modals were dismissed, False otherwise
+        """
+        dismissed_any = False
+        
+        try:
+            # Common modal dismissal selectors for CV-Library
+            modal_dismiss_selectors = [
+                # Generic close buttons
+                ".modal__close", 
+                ".modal-close",
+                ".close-modal",
+                "button[data-dismiss='modal']",
+                ".modal .close",
+                ".modal-header .close",
+                
+                # X buttons
+                ".modal .btn-close",
+                ".modal button:contains('×')",
+                ".modal [aria-label='Close']",
+                
+                # CV-Library specific
+                ".modal button:contains('OK')",
+                ".modal button:contains('Got it')",
+                ".modal button:contains('Continue')",
+                ".modal .btn-primary:contains('OK')",
+                
+                # Overlay clicks (as last resort)
+                ".modal-backdrop",
+                ".modal-overlay"
+            ]
+            
+            # Try to find and dismiss any visible modals
+            for selector in modal_dismiss_selectors:
+                try:
+                    elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
+                    for element in elements:
+                        if element.is_displayed() and element.is_enabled():
+                            self.logger.info(f"Dismissing modal using selector: {selector}")
+                            
+                            # Scroll into view and click
+                            self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+                            time.sleep(0.3)
+                            element.click()
+                            time.sleep(0.5)  # Wait for modal to close
+                            
+                            dismissed_any = True
+                            break
+                except Exception as e:
+                    self.logger.debug(f"Modal selector {selector} failed: {e}")
+                    continue
+                
+                if dismissed_any:
+                    break
+            
+            # If no standard close buttons worked, try ESC key
+            if not dismissed_any:
+                try:
+                    # Check if any modal is still visible
+                    modal_elements = self.driver.find_elements(By.CSS_SELECTOR, ".modal, .modal-dialog, [role='dialog']")
+                    for modal in modal_elements:
+                        if modal.is_displayed():
+                            self.logger.info("Trying ESC key to dismiss modal")
+                            from selenium.webdriver.common.keys import Keys
+                            self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.ESCAPE)
+                            time.sleep(0.5)
+                            dismissed_any = True
+                            break
+                except Exception as e:
+                    self.logger.debug(f"ESC key modal dismissal failed: {e}")
+            
+            if dismissed_any:
+                self.logger.info("Successfully dismissed modal dialog(s)")
+                time.sleep(1)  # Extra wait for page to stabilize
+            
+            return dismissed_any
+            
+        except Exception as e:
+            self.logger.warning(f"Error while dismissing modals: {e}")
+            return False
+
+    def find_search_form_elements(self) -> Optional[Dict[str, Any]]:
         """
         Find search form elements on the page.
         
@@ -362,6 +447,9 @@ class SearchManager:
             True if successful, False otherwise
         """
         try:
+            # First, dismiss any modal dialogs that might be blocking the form
+            self._dismiss_modals()
+            
             # Helper function to safely interact with elements
             def safe_element_interaction(element_key, action_func):
                 """Safely interact with an element, refinding if stale."""
@@ -711,62 +799,249 @@ class SearchManager:
             self.logger.error(f"Search submission failed: {e}")
             return False
     
-    def parse_search_results(self) -> SearchResultCollection:
+    def _detect_total_pages(self) -> int:
         """
-        Parse search results from the current page with JavaScript bulk extraction.
+        Detect the total number of pages from CV-Library's pagination.
         
         Returns:
-            SearchResultCollection with parsed results
+            Total number of pages (default: 1 if not detected)
         """
         try:
-            self.logger.info("⚡ Parsing search results (JavaScript bulk mode)")
-            start_time = time.time()
+            # Common pagination selectors for CV-Library
+            pagination_selectors = [
+                ".pagination",
+                ".pager", 
+                ".page-nav",
+                ".pagination-container",
+                "[class*='pagination']",
+                "[class*='pager']"
+            ]
             
-            # Wait briefly for page to be ready
-            time.sleep(0.5)
-            
-            # Use JavaScript bulk extraction (fastest method)
-            js_results = self._extract_all_results_with_javascript()
-            
-            if js_results:
-                # Convert JavaScript results to SearchResult objects
-                search_results = []
-                for js_result in js_results:
-                    try:
-                        search_result = SearchResult(
-                            name=js_result.get('name', 'Unknown'),
-                            location=js_result.get('location', 'Not specified'),
-                            experience_level=js_result.get('experience', 'Not specified'),
-                            salary=js_result.get('salary', 'Not specified'),
-                            skills=js_result.get('skills', []),
-                            profile_url=js_result.get('profileUrl', ''),
-                            search_rank=js_result.get('searchRank', 0),
-                            snippet=js_result.get('resultText', '')[:200]  # First 200 chars as snippet
-                        )
-                        search_results.append(search_result)
-                    except Exception as e:
-                        self.logger.debug(f"Failed to create SearchResult from JS data: {e}")
+            for selector in pagination_selectors:
+                try:
+                    pagination_container = self.driver.find_element(By.CSS_SELECTOR, selector)
+                    if not pagination_container.is_displayed():
                         continue
-                
-                parse_time = time.time() - start_time
-                self.logger.info(f"⚡ Successfully parsed {len(search_results)} results in {parse_time:.2f}s (JavaScript)")
-                
-                return SearchResultCollection(
-                    results=search_results,
-                    search_keywords=getattr(self, 'last_search_keywords', []),
-                    search_location=getattr(self, 'last_search_location', None),
-                    total_found=len(search_results),
-                    page_number=1,
-                    total_pages=1  # For now, focusing on single page optimization
-                )
+                    
+                    # Method 1: Look for "Page X of Y" text
+                    pagination_text = pagination_container.text.lower()
+                    
+                    # Pattern: "page 1 of 15" or "1 of 15 pages"
+                    import re
+                    page_of_pattern = re.search(r'(?:page\s+)?(\d+)\s+of\s+(\d+)(?:\s+pages?)?', pagination_text)
+                    if page_of_pattern:
+                        total_pages = int(page_of_pattern.group(2))
+                        self.logger.info(f"Found total pages from 'X of Y' pattern: {total_pages}")
+                        return total_pages
+                    
+                    # Method 2: Look for numbered page links
+                    page_links = pagination_container.find_elements(By.CSS_SELECTOR, "a")
+                    page_numbers = []
+                    
+                    for link in page_links:
+                        try:
+                            link_text = link.text.strip()
+                            # Skip non-numeric links (Next, Previous, etc.)
+                            if link_text.isdigit():
+                                page_numbers.append(int(link_text))
+                        except (ValueError, AttributeError):
+                            continue
+                    
+                    if page_numbers:
+                        total_pages = max(page_numbers)
+                        self.logger.info(f"Found total pages from page links: {total_pages}")
+                        return total_pages
+                    
+                    # Method 3: Look for last page link
+                    last_page_selectors = [
+                        "a[title*='last']",
+                        "a[aria-label*='last']", 
+                        ".last",
+                        "a:contains('Last')",
+                        ".pagination-last"
+                    ]
+                    
+                    for last_selector in last_page_selectors:
+                        try:
+                            if ":contains(" in last_selector:
+                                continue  # Skip text-based selectors for now
+                            last_link = pagination_container.find_element(By.CSS_SELECTOR, last_selector)
+                            href = last_link.get_attribute('href')
+                            if href:
+                                # Extract page number from URL
+                                page_match = re.search(r'[?&]page=(\d+)', href)
+                                if page_match:
+                                    total_pages = int(page_match.group(1))
+                                    self.logger.info(f"Found total pages from last page link: {total_pages}")
+                                    return total_pages
+                        except NoSuchElementException:
+                            continue
+                    
+                    # Method 4: JavaScript-based detection
+                    js_total_pages = self.driver.execute_script("""
+                        // Look for pagination info in the DOM
+                        const paginationTexts = Array.from(document.querySelectorAll('.pagination, .pager, .page-nav, [class*="pagination"]'))
+                            .map(el => el.textContent.toLowerCase());
+                        
+                        for (let text of paginationTexts) {
+                            // Pattern: "page 1 of 15"
+                            const match = text.match(/(?:page\\s+)?(\\d+)\\s+of\\s+(\\d+)(?:\\s+pages?)?/);
+                            if (match) {
+                                return parseInt(match[2]);
+                            }
+                        }
+                        
+                        // Look for the highest numbered page link
+                        const pageLinks = Array.from(document.querySelectorAll('.pagination a, .pager a'))
+                            .map(a => a.textContent.trim())
+                            .filter(text => /^\\d+$/.test(text))
+                            .map(text => parseInt(text));
+                        
+                        return pageLinks.length > 0 ? Math.max(...pageLinks) : 1;
+                    """)
+                    
+                    if js_total_pages and js_total_pages > 1:
+                        self.logger.info(f"Found total pages via JavaScript: {js_total_pages}")
+                        return js_total_pages
+                        
+                except NoSuchElementException:
+                    continue
+                except Exception as e:
+                    self.logger.debug(f"Error checking pagination with selector {selector}: {e}")
+                    continue
             
-            # Fallback to DOM-based extraction if JavaScript fails
-            self.logger.warning("JavaScript extraction failed, falling back to DOM parsing")
-            return self._parse_search_results_dom_fallback()
+            # Method 5: Check for results count and estimate pages
+            try:
+                results_info_selectors = [
+                    ".results-info",
+                    ".search-results-count", 
+                    ".results-count",
+                    "[class*='results']",
+                    ".search-summary"
+                ]
+                
+                for selector in results_info_selectors:
+                    try:
+                        results_info = self.driver.find_element(By.CSS_SELECTOR, selector)
+                        info_text = results_info.text.lower()
+                        
+                        # Pattern: "showing 1-20 of 1,234 results"
+                        results_match = re.search(r'(?:showing\s+)?(?:\d+\s*[-–]\s*\d+\s+of\s+)?(\d{1,3}(?:,\d{3})*)\s+(?:results?|candidates?)', info_text)
+                        if results_match:
+                            total_results = int(results_match.group(1).replace(',', ''))
+                            results_per_page = 20  # CV-Library default
+                            estimated_pages = (total_results + results_per_page - 1) // results_per_page
+                            self.logger.info(f"Estimated total pages from results count: {estimated_pages} (based on {total_results} results)")
+                            return estimated_pages
+                            
+                    except NoSuchElementException:
+                        continue
+            except Exception as e:
+                self.logger.debug(f"Error estimating pages from results count: {e}")
+            
+            self.logger.info("Could not detect total pages, defaulting to 1")
+            return 1
             
         except Exception as e:
-            self.logger.error(f"Search results parsing failed: {e}")
-            return SearchResultCollection(results=[])
+            self.logger.warning(f"Error detecting total pages: {e}")
+            return 1
+
+    def parse_search_results(self) -> SearchResultCollection:
+        """
+        Parse search results from the current page with enhanced debugging.
+        
+        Returns:
+            SearchResultCollection containing parsed results
+        """
+        try:
+            start_time = time.time()
+            self.logger.info("🔍 Parsing search results with enhanced debugging...")
+            
+            # Save search results page HTML for debugging
+            try:
+                debug_html_path = Path("downloaded_cvs") / "debug_search_page.html"
+                debug_html_path.parent.mkdir(exist_ok=True)
+                with open(debug_html_path, 'w', encoding='utf-8') as f:
+                    f.write(self.driver.page_source)
+                self.logger.info(f"📄 Saved search page HTML for debugging: {debug_html_path}")
+            except Exception as e:
+                self.logger.warning(f"Could not save debug HTML: {e}")
+            
+            # Save visible text for debugging
+            try:
+                debug_text_path = Path("downloaded_cvs") / "debug_search_text.txt"
+                with open(debug_text_path, 'w', encoding='utf-8') as f:
+                    f.write(self.driver.find_element(By.TAG_NAME, "body").text)
+                self.logger.info(f"📄 Saved search page text for debugging: {debug_text_path}")
+            except Exception as e:
+                self.logger.warning(f"Could not save debug text: {e}")
+            
+            # Find result elements using the optimized approach
+            result_elements = self._find_result_elements()
+            self.logger.info(f"🔍 Found {len(result_elements)} result elements on page")
+            
+            if not result_elements:
+                self.logger.warning("❌ No result elements found")
+                return SearchResultCollection(
+                    results=[],
+                    search_keywords=getattr(self, 'last_search_keywords', []),
+                    total_pages=self._detect_total_pages()
+                )
+            
+            # Process each result element individually with enhanced debugging
+            parsed_results = []
+            for i, element in enumerate(result_elements, 1):
+                try:
+                    self.logger.debug(f"🔍 Processing result element {i}/{len(result_elements)}")
+                    
+                    # Save individual result element HTML for debugging (first 3 only to avoid spam)
+                    if i <= 3:
+                        try:
+                            debug_element_path = Path("downloaded_cvs") / f"debug_result_element_{i}.html"
+                            with open(debug_element_path, 'w', encoding='utf-8') as f:
+                                f.write(element.get_attribute('outerHTML'))
+                            self.logger.debug(f"📄 Saved result element {i} HTML: {debug_element_path}")
+                        except Exception as e:
+                            self.logger.debug(f"Could not save element HTML: {e}")
+                    
+                    result = self._parse_single_candidate(element, i)
+                    if result:
+                        parsed_results.append(result)
+                        self.logger.debug(f"✅ Successfully parsed result {i}: {result.name} (ID: {result.cv_id})")
+                    else:
+                        self.logger.warning(f"❌ Failed to parse result {i}")
+                        
+                except Exception as e:
+                    self.logger.error(f"❌ Error processing result element {i}: {e}")
+                    continue
+            
+            # Create and return collection
+            collection = SearchResultCollection(
+                results=parsed_results,
+                search_keywords=getattr(self, 'last_search_keywords', []),
+                total_pages=self._detect_total_pages()
+            )
+            
+            duration = time.time() - start_time
+            self.logger.info(f"⚡ Successfully parsed {len(parsed_results)} results in {duration:.2f}s (Individual processing)")
+            
+            # Log detailed summary
+            self.logger.info("📊 === SEARCH RESULTS PARSING SUMMARY ===")
+            self.logger.info(f"🔸 Total results found: {len(parsed_results)}")
+            for i, result in enumerate(parsed_results[:5], 1):  # Log first 5 results
+                self.logger.info(f"🔸 Result {i}: {result.name} | ID: {result.cv_id} | Match: {result.profile_match_percentage}")
+            
+            return collection
+            
+        except Exception as e:
+            self.logger.error(f"❌ Error parsing search results: {e}")
+            import traceback
+            self.logger.error(f"❌ Traceback: {traceback.format_exc()}")
+            return SearchResultCollection(
+                results=[],
+                search_keywords=getattr(self, 'last_search_keywords', []),
+                total_pages=1
+            )
     
     def _parse_single_result(self, result_element, index: int) -> Optional[SearchResult]:
         """
@@ -893,6 +1168,179 @@ class SearchManager:
             self.logger.warning(f"Failed to parse result {index}: {e}")
             return None
     
+    def go_to_page(self, page_number: int) -> bool:
+        """
+        Navigate to a specific page number.
+        
+        Args:
+            page_number: The page number to navigate to (1-based)
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            if page_number < 1:
+                self.logger.warning(f"Invalid page number: {page_number}")
+                return False
+            
+            # Method 1: Try to find direct page link
+            page_link_selectors = [
+                f"a[href*='page={page_number}']",
+                f".pagination a:contains('{page_number}')",
+                f".pager a:contains('{page_number}')",
+                f".page-nav a[data-page='{page_number}']"
+            ]
+            
+            for selector in page_link_selectors:
+                try:
+                    if ":contains(" in selector:
+                        continue  # Skip text-based selectors for now
+                    page_link = self.driver.find_element(By.CSS_SELECTOR, selector)
+                    if page_link.is_displayed() and page_link.is_enabled():
+                        self.logger.info(f"Navigating to page {page_number} using direct link")
+                        WebDriverUtils.safe_click(self.driver, page_link)
+                        time.sleep(2)  # Wait for page to load
+                        return True
+                except NoSuchElementException:
+                    continue
+            
+            # Method 2: JavaScript-based navigation
+            try:
+                # Look for pagination links and click the correct one
+                js_result = self.driver.execute_script(f"""
+                    // Find all pagination links
+                    const pageLinks = Array.from(document.querySelectorAll('.pagination a, .pager a, .page-nav a'));
+                    
+                    // Look for link with the specific page number
+                    for (let link of pageLinks) {{
+                        if (link.textContent.trim() === '{page_number}') {{
+                            link.click();
+                            return true;
+                        }}
+                    }}
+                    
+                    // If direct link not found, try to construct URL
+                    const currentUrl = window.location.href;
+                    const pageParam = 'page={page_number}';
+                    
+                    let newUrl;
+                    if (currentUrl.includes('page=')) {{
+                        newUrl = currentUrl.replace(/page=\\d+/, pageParam);
+                    }} else {{
+                        const separator = currentUrl.includes('?') ? '&' : '?';
+                        newUrl = currentUrl + separator + pageParam;
+                    }}
+                    
+                    window.location.href = newUrl;
+                    return true;
+                """)
+                
+                if js_result:
+                    self.logger.info(f"Navigated to page {page_number} using JavaScript")
+                    time.sleep(3)  # Wait for page to load
+                    return True
+                    
+            except Exception as e:
+                self.logger.debug(f"JavaScript navigation failed: {e}")
+            
+            # Method 3: URL manipulation
+            try:
+                current_url = self.driver.current_url
+                
+                # Add or update page parameter
+                if 'page=' in current_url:
+                    import re
+                    new_url = re.sub(r'page=\d+', f'page={page_number}', current_url)
+                else:
+                    separator = '&' if '?' in current_url else '?'
+                    new_url = f"{current_url}{separator}page={page_number}"
+                
+                self.logger.info(f"Navigating to page {page_number} via URL: {new_url}")
+                self.driver.get(new_url)
+                time.sleep(2)
+                return True
+                
+            except Exception as e:
+                self.logger.error(f"URL navigation to page {page_number} failed: {e}")
+                return False
+            
+        except Exception as e:
+            self.logger.error(f"Failed to navigate to page {page_number}: {e}")
+            return False
+
+    def get_current_page_number(self) -> int:
+        """
+        Get the current page number.
+        
+        Returns:
+            Current page number (1-based)
+        """
+        try:
+            # Method 1: Look for active/current page indicator
+            current_page_selectors = [
+                ".pagination .active",
+                ".pagination .current", 
+                ".pager .active",
+                ".pager .current",
+                ".page-nav .current",
+                "[class*='pagination'] [class*='active']",
+                "[class*='pagination'] [class*='current']"
+            ]
+            
+            for selector in current_page_selectors:
+                try:
+                    current_element = self.driver.find_element(By.CSS_SELECTOR, selector)
+                    page_text = current_element.text.strip()
+                    if page_text.isdigit():
+                        page_number = int(page_text)
+                        self.logger.debug(f"Current page detected from active element: {page_number}")
+                        return page_number
+                except NoSuchElementException:
+                    continue
+            
+            # Method 2: Extract from URL
+            try:
+                current_url = self.driver.current_url
+                import re
+                page_match = re.search(r'[?&]page=(\d+)', current_url)
+                if page_match:
+                    page_number = int(page_match.group(1))
+                    self.logger.debug(f"Current page detected from URL: {page_number}")
+                    return page_number
+            except Exception as e:
+                self.logger.debug(f"Could not extract page from URL: {e}")
+            
+            # Method 3: JavaScript detection
+            try:
+                js_page = self.driver.execute_script(r"""
+                    // Look for active page indicator
+                    const activeElements = document.querySelectorAll('.pagination .active, .pager .active, .current');
+                    for (let el of activeElements) {
+                        const text = el.textContent.trim();
+                        if (/^\d+$/.test(text)) {
+                            return parseInt(text);
+                        }
+                    }
+                    
+                    // Extract from URL
+                    const urlMatch = window.location.href.match(/[?&]page=(\d+)/);
+                    return urlMatch ? parseInt(urlMatch[1]) : 1;
+                """)
+                
+                if js_page:
+                    self.logger.debug(f"Current page detected via JavaScript: {js_page}")
+                    return js_page
+            except Exception as e:
+                self.logger.debug(f"JavaScript page detection failed: {e}")
+            
+            # Default to page 1
+            self.logger.debug("Could not detect current page, defaulting to 1")
+            return 1
+            
+        except Exception as e:
+            self.logger.warning(f"Error detecting current page: {e}")
+            return 1
+
     def has_next_page(self) -> bool:
         """
         Check if there are more pages of results.
@@ -1271,6 +1719,228 @@ class SearchManager:
             self.logger.debug(f"Fast parse failed for result {index}: {e}")
             return None 
 
+    def _find_result_elements(self) -> List[webdriver.remote.webelement.WebElement]:
+        """
+        Find all individual result elements on the current page.
+        
+        Returns:
+            List of WebElement objects for each search result.
+        """
+        try:
+            # Use the defined selector for individual results
+            result_elements = self.driver.find_elements(By.CSS_SELECTOR, self.RESULT_ITEM_SELECTOR)
+            return result_elements
+        except NoSuchElementException:
+            return []
+        except Exception as e:
+            self.logger.error(f"Error finding result elements: {e}")
+            return [] 
+
+    def _parse_single_candidate(self, result_element: webdriver.remote.webelement.WebElement, index: int) -> Optional[SearchResult]:
+        """
+        Parse a single search result element into a comprehensive SearchResult object with enhanced debugging.
+        
+        Args:
+            result_element: WebElement containing the result
+            index: Index of this result (1-based)
+            
+        Returns:
+            SearchResult object or None if parsing failed
+        """
+        try:
+            # Get the full text content of this result element for parsing
+            element_text = result_element.text.strip()
+            element_html = result_element.get_attribute('innerHTML')
+            
+            self.logger.debug(f"🔍 Parsing candidate {index}: Element text preview: '{element_text[:100]}...'")
+            
+            # Initialize all variables for comprehensive extraction
+            extracted_data = {
+                'cv_id': None,
+                'name': None,
+                'location': None,
+                'town': None,
+                'county': None,
+                'salary': None,
+                'expected_salary': None,
+                'skills': [],
+                'main_skills': [],
+                'profile_url': None,
+                'current_job_title': None,
+                'desired_job_title': None,
+                'job_type': None,
+                'date_available': None,
+                'willing_to_travel': None,
+                'willing_to_relocate': None,
+                'uk_driving_licence': None,
+                'profile_match_percentage': None,
+                'profile_cv_last_updated': None,
+                'last_viewed_date': None,
+                'quickview_ref': None,
+                'chosen_industries': [],
+                'cv_keywords': None,
+                'fluent_languages': [],
+                'summary': None
+            }
+            
+            # Method 1: Extract from links (most reliable for CV ID and URL)
+            cv_links = result_element.find_elements(By.CSS_SELECTOR, "a[href*='/cv/']")
+            if cv_links:
+                link = cv_links[0]
+                href = link.get_attribute('href')
+                self.logger.debug(f"🔍 Found CV link: {href}")
+                
+                if href:
+                    # Extract CV ID from URL
+                    cv_id_match = re.search(r'/cv/(\d+)', href)
+                    if cv_id_match:
+                        extracted_data['cv_id'] = cv_id_match.group(1)
+                        extracted_data['profile_url'] = href
+                        self.logger.debug(f"✅ Extracted CV ID: {extracted_data['cv_id']}")
+            
+            # If no CV ID found, skip this result
+            if not extracted_data['cv_id']:
+                self.logger.warning(f"No CV ID found for result {index}")
+                return None
+            
+            # Method 2: Enhanced text-based extraction using the patterns we see in debug
+            self.logger.debug(f"🔍 Element text structure: {element_text[:300]}...")
+            
+            # Extract candidate name (usually the first substantial text line)
+            text_lines = [line.strip() for line in element_text.split('\n') if line.strip()]
+            
+            # Look for name patterns - usually comes before match percentage
+            for i, line in enumerate(text_lines):
+                # Skip common UI elements and find the actual name
+                if (line and len(line) > 3 and len(line) < 60 and
+                    not line.lower().startswith(('add note', 'select', 'location', 'willing', 'salary', 
+                                               'job title', 'uk driving', 'desired role', 'job type', 
+                                               'date available', 'skills:', 'cv keywords:', 'last viewed:',
+                                               'view cv', 'profile/cv last updated')) and
+                    not re.search(r'^\d+%\s*match$', line, re.IGNORECASE) and
+                    not line.startswith(('£', 'http', 'www')) and
+                    not re.search(r'^\d{2}/\d{2}/\d{4}', line)):  # Not a date
+                    
+                    extracted_data['name'] = line
+                    self.logger.debug(f"✅ Extracted name: {extracted_data['name']}")
+                    break
+            
+            # Extract specific fields using direct text search
+            field_patterns = [
+                # Location information
+                (r'Location\s*([^\n\r]+)', 'location'),
+                (r'Salary\s*([^\n\r]+)', 'salary'),
+                (r'Job Title\s*([^\n\r]+)', 'current_job_title'),
+                (r'Desired Role\s*([^\n\r]+)', 'desired_job_title'),
+                (r'Job Type\s*([^\n\r]+)', 'job_type'),
+                (r'Date Available\s*([^\n\r]+)', 'date_available'),
+                (r'Willing to Travel\s*([^\n\r]+)', 'willing_to_travel'),
+                (r'Willing to Relocate\s*([^\n\r]+)', 'willing_to_relocate'),
+                (r'UK Driving Licence\s*([^\n\r]+)', 'uk_driving_licence'),
+                
+                # Profile metadata
+                (r'(\d+%\s*Match)', 'profile_match_percentage'),
+                (r'Profile/CV Last Updated:\s*([^\n\r]+)', 'profile_cv_last_updated'),
+                (r'Last Viewed:\s*([^\n\r]+)', 'last_viewed_date'),
+                
+                # Skills and keywords  
+                (r'Skills:\s*([^\n\r]+(?:\n[^\n\r]+)*?)(?=CV Keywords:|Last Viewed:|View CV|$)', 'skills_text'),
+                (r'CV Keywords:\s*([^\n\r]+(?:\n[^\n\r]+)*?)(?=Last Viewed:|View CV|$)', 'cv_keywords'),
+            ]
+            
+            for pattern, field_name in field_patterns:
+                match = re.search(pattern, element_text, re.IGNORECASE | re.MULTILINE)
+                if match:
+                    value = match.group(1).strip()
+                    self.logger.debug(f"🔍 Found {field_name}: '{value[:50]}...'")
+                    
+                    if field_name == 'skills_text':
+                        # Parse skills from the skills text
+                        if value:
+                            # Split by common separators and clean up
+                            skill_candidates = re.split(r'[,\n\r]+', value)
+                            skills = []
+                            for skill in skill_candidates:
+                                skill = skill.strip()
+                                if (skill and len(skill) > 2 and len(skill) < 50 and
+                                    not skill.lower().startswith(('cv keywords', 'last viewed', 'view cv'))):
+                                    skills.append(skill)
+                            extracted_data['skills'] = skills[:15]  # Limit to 15
+                            extracted_data['summary'] = value  # Keep full text as summary
+                            self.logger.debug(f"✅ Extracted {len(skills)} skills")
+                    else:
+                        extracted_data[field_name] = value
+            
+            # Parse location into town and county if possible
+            if extracted_data['location']:
+                location_parts = extracted_data['location'].split(',')
+                if len(location_parts) >= 2:
+                    extracted_data['town'] = location_parts[0].strip()
+                    extracted_data['county'] = location_parts[1].strip()
+                elif len(location_parts) == 1:
+                    extracted_data['town'] = location_parts[0].strip()
+            
+            # Method 3: DOM-based extraction for additional fields
+            try:
+                # Look for specific elements within this result
+                name_elements = result_element.find_elements(By.CSS_SELECTOR, "h3, .candidate-name, .name, strong")
+                for elem in name_elements:
+                    if elem.text and len(elem.text) > 3 and not extracted_data['name']:
+                        potential_name = elem.text.strip()
+                        if not potential_name.lower().startswith(('view cv', 'add note', 'select')):
+                            extracted_data['name'] = potential_name
+                            break
+                
+                # Look for match percentage elements
+                if not extracted_data['profile_match_percentage']:
+                    match_elements = result_element.find_elements(By.CSS_SELECTOR, "[class*='match'], .percentage")
+                    for elem in match_elements:
+                        if elem.text and '%' in elem.text:
+                            extracted_data['profile_match_percentage'] = elem.text.strip()
+                            break
+                        
+            except Exception as e:
+                self.logger.debug(f"❌ Error in DOM-based extraction: {e}")
+            
+            # Create SearchResult object with all extracted data
+            search_result = SearchResult(
+                cv_id=extracted_data['cv_id'],
+                name=extracted_data['name'] or "Unknown",
+                location=extracted_data['location'],
+                town=extracted_data['town'],
+                county=extracted_data['county'],
+                salary=extracted_data['salary'],
+                expected_salary=extracted_data['expected_salary'],
+                skills=extracted_data['skills'],
+                main_skills=extracted_data['main_skills'],
+                profile_url=extracted_data['profile_url'],
+                current_job_title=extracted_data['current_job_title'],
+                desired_job_title=extracted_data['desired_job_title'],
+                job_type=extracted_data['job_type'],
+                date_available=extracted_data['date_available'],
+                willing_to_travel=extracted_data['willing_to_travel'],
+                willing_to_relocate=extracted_data['willing_to_relocate'],
+                uk_driving_licence=extracted_data['uk_driving_licence'],
+                profile_match_percentage=extracted_data['profile_match_percentage'],
+                profile_cv_last_updated=extracted_data['profile_cv_last_updated'],
+                last_viewed_date=extracted_data['last_viewed_date'],
+                quickview_ref=extracted_data['quickview_ref'],
+                chosen_industries=extracted_data['chosen_industries'],
+                cv_keywords=extracted_data['cv_keywords'],
+                fluent_languages=extracted_data['fluent_languages'],
+                summary=extracted_data['summary'],
+                search_rank=index
+            )
+            
+            self.logger.debug(f"✅ Successfully parsed candidate {index}: {search_result.name} | CV ID: {search_result.cv_id} | Match: {search_result.profile_match_percentage} | Last Viewed: {search_result.last_viewed_date}")
+            return search_result
+            
+        except Exception as e:
+            self.logger.error(f"❌ Error parsing candidate {index}: {e}")
+            import traceback
+            self.logger.debug(f"❌ Traceback: {traceback.format_exc()}")
+            return None
+
     def _extract_all_results_with_javascript(self) -> List[Dict[str, Any]]:
         """
         Extract all search results using JavaScript for maximum speed.
@@ -1296,6 +1966,7 @@ class SearchManager:
                     
                     // Extract location (common patterns)
                     const locationMatch = resultText.match(/(?:Location|Based in|Located in)\\s*:?\\s*([^\\n\\r,]+)/i) ||
+                                        resultText.match(/(?:Location|Based in|Located in)\\s*:?\\s*([^\\n\\r,]+)/i) ||
                                         resultText.match(/\\b([A-Z][a-z]+(?:\\s+[A-Z][a-z]+)*(?:,\\s*[A-Z]{2,})?(?:,\\s*UK)?)\\b/);
                     const location = locationMatch ? locationMatch[1].trim() : 'Not specified';
                     
@@ -1376,13 +2047,16 @@ class SearchManager:
             parse_time = time.time() - start_time
             self.logger.info(f"⚡ Successfully parsed {len(search_results)} results in {parse_time:.2f}s (DOM fallback)")
             
+            # Detect total pages for pagination
+            total_pages = self._detect_total_pages()
+            
             return SearchResultCollection(
                 results=search_results,
                 search_keywords=getattr(self, 'last_search_keywords', []),
                 search_location=getattr(self, 'last_search_location', None),
                 total_found=len(search_results),
                 page_number=1,
-                total_pages=1  # For now, focusing on single page optimization
+                total_pages=total_pages
             )
             
         except Exception as e:

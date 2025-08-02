@@ -11,7 +11,7 @@ from .cv_data import CVData
 
 @dataclass
 class SearchResult:
-    """Individual search result item from CV-Library."""
+    """Individual search result item from CV-Library with comprehensive candidate information."""
     
     # Basic Information
     cv_id: Optional[str] = None
@@ -21,12 +21,33 @@ class SearchResult:
     salary: Optional[str] = None
     summary: Optional[str] = None
     
+    # Enhanced Job Details (from candidate cards)
+    current_job_title: Optional[str] = None
+    desired_job_title: Optional[str] = None
+    job_type: Optional[str] = None  # Permanent, Contract, etc.
+    date_available: Optional[str] = None
+    willing_to_travel: Optional[str] = None
+    willing_to_relocate: Optional[str] = None
+    uk_driving_licence: Optional[str] = None
+    
+    # Profile Metadata (from CV-Library interface)
+    profile_match_percentage: Optional[str] = None  # e.g., "100% Match"
+    profile_cv_last_updated: Optional[str] = None  # e.g., "01/08/2025 14:28"
+    last_viewed_date: Optional[str] = None  # e.g., "02/08/2025 (23:13)"
+    quickview_ref: Optional[str] = None  # Reference number shown in interface
+    
+    # Enhanced Skills and Experience
+    main_skills: List[str] = field(default_factory=list)  # From "Candidates Main Skills" section
+    chosen_industries: List[str] = field(default_factory=list)  # From "Candidates Chosen Industries"
+    cv_keywords: Optional[str] = None  # From "CV Keywords" section
+    fluent_languages: List[str] = field(default_factory=list)
+    
     # URLs and Links
     profile_url: Optional[str] = None
     cv_preview_url: Optional[str] = None
     download_url: Optional[str] = None
     
-    # Metadata
+    # Original Metadata (preserved for compatibility)
     last_active: Optional[str] = None
     experience_level: Optional[str] = None
     availability: Optional[str] = None
@@ -37,7 +58,7 @@ class SearchResult:
     search_keywords: List[str] = field(default_factory=list)
     search_location: Optional[str] = None
     
-    # Additional Details
+    # Additional Details (legacy)
     skills: List[str] = field(default_factory=list)
     qualifications: List[str] = field(default_factory=list)
     industry: Optional[str] = None
@@ -46,8 +67,13 @@ class SearchResult:
     processed: bool = False
     selected_for_download: bool = False
     
+    # Additional Extracted Information
+    town: Optional[str] = None  # Specific town extraction
+    county: Optional[str] = None  # County extraction
+    expected_salary: Optional[str] = None  # More specific salary field
+    
     def to_cv_data(self) -> CVData:
-        """Convert search result to CVData object."""
+        
         cv_data = CVData()
         
         # Basic mapping
@@ -59,28 +85,55 @@ class SearchResult:
         # Candidate information
         cv_data.candidate.candidate_id = self.cv_id
         cv_data.candidate.name = self.name
-        cv_data.candidate.title = self.title
+        cv_data.candidate.title = self.current_job_title or self.title
         cv_data.candidate.location = self.location
-        cv_data.candidate.salary_expectation = self.salary
+        cv_data.candidate.salary_expectation = self.salary or self.expected_salary
         cv_data.candidate.summary = self.summary
-        cv_data.candidate.availability = self.availability
+        cv_data.candidate.availability = self.availability or self.date_available
         cv_data.candidate.last_active = self.last_active
-        cv_data.candidate.skills = self.skills.copy()
+        cv_data.candidate.skills = (self.main_skills + self.skills)  # Combine both skill lists
         
         return cv_data
+
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert search result to dictionary."""
+        """Convert search result to dictionary with all enhanced fields."""
         return {
+            # Basic Information
             'cv_id': self.cv_id,
             'title': self.title,
             'name': self.name,
             'location': self.location,
             'salary': self.salary,
             'summary': self.summary,
+            
+            # Enhanced Job Details
+            'current_job_title': self.current_job_title,
+            'desired_job_title': self.desired_job_title,
+            'job_type': self.job_type,
+            'date_available': self.date_available,
+            'willing_to_travel': self.willing_to_travel,
+            'willing_to_relocate': self.willing_to_relocate,
+            'uk_driving_licence': self.uk_driving_licence,
+            
+            # Profile Metadata
+            'profile_match_percentage': self.profile_match_percentage,
+            'profile_cv_last_updated': self.profile_cv_last_updated,
+            'last_viewed_date': self.last_viewed_date,
+            'quickview_ref': self.quickview_ref,
+            
+            # Enhanced Skills
+            'main_skills': self.main_skills,
+            'chosen_industries': self.chosen_industries,
+            'cv_keywords': self.cv_keywords,
+            'fluent_languages': self.fluent_languages,
+            
+            # URLs
             'profile_url': self.profile_url,
             'cv_preview_url': self.cv_preview_url,
             'download_url': self.download_url,
+            
+            # Legacy fields
             'last_active': self.last_active,
             'experience_level': self.experience_level,
             'availability': self.availability,
@@ -92,7 +145,12 @@ class SearchResult:
             'qualifications': self.qualifications,
             'industry': self.industry,
             'processed': self.processed,
-            'selected_for_download': self.selected_for_download
+            'selected_for_download': self.selected_for_download,
+            
+            # Additional fields
+            'town': self.town,
+            'county': self.county,
+            'expected_salary': self.expected_salary
         }
     
     @classmethod
@@ -161,6 +219,7 @@ class SearchResultCollection:
     search_timestamp: Optional[datetime] = None
     total_found: Optional[int] = None
     page_number: int = 1
+    total_pages: int = 1
     results_per_page: Optional[int] = None
     
     def __post_init__(self):

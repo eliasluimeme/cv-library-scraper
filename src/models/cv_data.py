@@ -10,8 +10,9 @@ from pathlib import Path
 
 @dataclass
 class CandidateInfo:
-    """Information about a candidate extracted from CV preview."""
+    """Information about a candidate extracted from CV preview and profile page."""
     
+    # Basic Information
     candidate_id: Optional[str] = None
     name: Optional[str] = None
     title: Optional[str] = None
@@ -25,9 +26,40 @@ class CandidateInfo:
     last_active: Optional[str] = None
     contact_info: Dict[str, str] = field(default_factory=dict)
     
+    # Enhanced Profile Information
+    current_job_title: Optional[str] = None
+    desired_job_title: Optional[str] = None
+    town: Optional[str] = None
+    county: Optional[str] = None
+    main_phone: Optional[str] = None
+    optional_phone: Optional[str] = None
+    email: Optional[str] = None
+    
+    # Job Preferences
+    job_type: Optional[str] = None  # Permanent, Contract, etc.
+    willing_to_travel: Optional[str] = None
+    willing_to_relocate: Optional[str] = None
+    uk_driving_licence: Optional[str] = None
+    date_available: Optional[str] = None
+    expected_salary: Optional[str] = None
+    fluent_languages: List[str] = field(default_factory=list)
+    
+    # Professional Details
+    chosen_industries: List[str] = field(default_factory=list)
+    main_skills: List[str] = field(default_factory=list)
+    cv_keywords: Optional[str] = None
+    
+    # Profile Metadata
+    profile_last_updated: Optional[str] = None
+    date_registered: Optional[str] = None
+    last_viewed_date: Optional[str] = None
+    quickview_ref: Optional[str] = None
+    profile_match_percentage: Optional[str] = None
+    
     def to_dict(self) -> Dict[str, Any]:
-        """Convert candidate info to dictionary."""
+        """Convert candidate info to dictionary with all enhanced fields."""
         return {
+            # Basic Information
             'candidate_id': self.candidate_id,
             'name': self.name,
             'title': self.title,
@@ -39,7 +71,37 @@ class CandidateInfo:
             'summary': self.summary,
             'availability': self.availability,
             'last_active': self.last_active,
-            'contact_info': self.contact_info
+            'contact_info': self.contact_info,
+            
+            # Enhanced Profile Information
+            'current_job_title': self.current_job_title,
+            'desired_job_title': self.desired_job_title,
+            'town': self.town,
+            'county': self.county,
+            'main_phone': self.main_phone,
+            'optional_phone': self.optional_phone,
+            'email': self.email,
+            
+            # Job Preferences
+            'job_type': self.job_type,
+            'willing_to_travel': self.willing_to_travel,
+            'willing_to_relocate': self.willing_to_relocate,
+            'uk_driving_licence': self.uk_driving_licence,
+            'date_available': self.date_available,
+            'expected_salary': self.expected_salary,
+            'fluent_languages': self.fluent_languages,
+            
+            # Professional Details
+            'chosen_industries': self.chosen_industries,
+            'main_skills': self.main_skills,
+            'cv_keywords': self.cv_keywords,
+            
+            # Profile Metadata
+            'profile_last_updated': self.profile_last_updated,
+            'date_registered': self.date_registered,
+            'last_viewed_date': self.last_viewed_date,
+            'quickview_ref': self.quickview_ref,
+            'profile_match_percentage': self.profile_match_percentage
         }
 
 
@@ -149,7 +211,29 @@ class CVData:
                 summary=candidate_data.get('summary'),
                 availability=candidate_data.get('availability'),
                 last_active=candidate_data.get('last_active'),
-                contact_info=candidate_data.get('contact_info', {})
+                contact_info=candidate_data.get('contact_info', {}),
+                current_job_title=candidate_data.get('current_job_title'),
+                desired_job_title=candidate_data.get('desired_job_title'),
+                town=candidate_data.get('town'),
+                county=candidate_data.get('county'),
+                main_phone=candidate_data.get('main_phone'),
+                optional_phone=candidate_data.get('optional_phone'),
+                email=candidate_data.get('email'),
+                job_type=candidate_data.get('job_type'),
+                willing_to_travel=candidate_data.get('willing_to_travel'),
+                willing_to_relocate=candidate_data.get('willing_to_relocate'),
+                uk_driving_licence=candidate_data.get('uk_driving_licence'),
+                date_available=candidate_data.get('date_available'),
+                expected_salary=candidate_data.get('expected_salary'),
+                fluent_languages=candidate_data.get('fluent_languages', []),
+                chosen_industries=candidate_data.get('chosen_industries', []),
+                main_skills=candidate_data.get('main_skills', []),
+                cv_keywords=candidate_data.get('cv_keywords'),
+                profile_last_updated=candidate_data.get('profile_last_updated'),
+                date_registered=candidate_data.get('date_registered'),
+                last_viewed_date=candidate_data.get('last_viewed_date'),
+                quickview_ref=candidate_data.get('quickview_ref'),
+                profile_match_percentage=candidate_data.get('profile_match_percentage')
             )
         
         return cv_data
