@@ -21,14 +21,32 @@ class ScrapingSettings:
 
 
 @dataclass
-class BrowserSettings:
-    """Configuration for browser/WebDriver settings."""
+class BrowserProfile:
+    """Browser profile settings for session persistence."""
+    enable_persistent_profile: bool = True
+    profile_name: str = "default"
+    auto_backup: bool = True
+    backup_on_login: bool = True
+    clear_on_logout: bool = False
+    max_profile_age_hours: int = 24
+    max_profile_size_mb: int = 500
+
+@dataclass
+class Browser:
+    """Browser configuration settings."""
     browser_type: str = "chrome"
     headless: bool = True
     window_width: int = 1920
     window_height: int = 1080
-    user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    user_agent: str = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    )
     timeout: int = 30
+    
+    # Profile settings
+    profile: BrowserProfile = field(default_factory=BrowserProfile)
 
 
 @dataclass
@@ -77,7 +95,7 @@ class Settings:
     def __init__(self):
         self.credentials = self._load_credentials()
         self.scraping = ScrapingSettings()
-        self.browser = BrowserSettings()
+        self.browser = Browser()
         self.search = SearchCriteria()
         self.download = DownloadSettings()
         self.logging = LoggingSettings()

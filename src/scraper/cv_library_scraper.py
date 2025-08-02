@@ -1,44 +1,51 @@
 """
-Main CV-Library Scraper class.
-This is the primary interface for the CV-Library scraping functionality.
+Main CV-Library scraper class that coordinates authentication, search, and download operations.
 """
 
 import logging
-from typing import List, Optional, Dict, Any
+import time
+import uuid
+from datetime import datetime
 from pathlib import Path
+from typing import List, Dict, Any, Optional
 
 from ..config.settings import Settings
-from ..models.search_result import SearchResultCollection
 from ..models.cv_data import CVData
+from ..models.search_result import SearchResultCollection
+from .auth import AuthenticationManager
+from .search import SearchManager
+from .download import DownloadManager
 from .utils import ScrapingUtils
 
 
 class CVLibraryScraper:
     """
-    Main CV-Library scraper class that coordinates authentication, search, and download operations.
+    Main scraper class that orchestrates the entire CV scraping workflow.
     """
     
     def __init__(self, settings: Settings):
-        """
-        Initialize the CV-Library scraper.
-        
-        Args:
-            settings: Configuration settings for the scraper
-        """
+        """Initialize the scraper with configuration."""
         self.settings = settings
         self.logger = logging.getLogger(__name__)
+        
+        # Initialize managers
+        self.auth_manager = AuthenticationManager(settings)
+        self.search_manager = None  # Will be initialized after authentication
+        self.download_manager = None  # Will be initialized after authentication
         self.utils = ScrapingUtils(settings)
         
-        # Initialize components (will be implemented in future phases)
-        self.auth_manager = None  # AuthenticationManager(settings)
-        self.search_manager = None  # SearchManager(settings)
-        self.download_manager = None  # DownloadManager(settings)
-        
-        self.session_id = None
+        # Session state
+        self.session_id = self._generate_session_id()
         self.is_authenticated = False
         self.current_session_data = {}
         
-        self.logger.info("CV-Library scraper initialized")
+        self.logger.info(f"CV-Library scraper initialized with session ID: {self.session_id}")
+    
+    def _generate_session_id(self) -> str:
+        """Generate a unique session ID."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_id = str(uuid.uuid4())[:8]
+        return f"session_{timestamp}_{unique_id}"
     
     def authenticate(self, username: Optional[str] = None, password: Optional[str] = None) -> bool:
         """
@@ -51,119 +58,330 @@ class CVLibraryScraper:
         Returns:
             True if authentication successful, False otherwise
         """
-        # TODO: Implement authentication in Phase 3.2
-        self.logger.info("Authentication not yet implemented")
-        return False
+        try:
+            self.logger.info("Starting authentication with CV-Library")
+            
+            # Use the real authentication manager
+            success = self.auth_manager.login(username, password)
+            
+            if success:
+                self.is_authenticated = True
+                self.logger.info("Authentication successful")
+                
+                # Initialize other managers now that we have an authenticated WebDriver
+                driver = self.auth_manager.get_driver()
+                if driver:
+                    self.search_manager = SearchManager(self.settings, driver)
+                    self.download_manager = DownloadManager(self.settings)
+                
+                return True
+            else:
+                self.is_authenticated = False
+                self.logger.error("Authentication failed")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"Authentication error: {e}")
+            self.is_authenticated = False
+            return False
     
     def search(self, keywords: List[str], location: Optional[str] = None, 
-               limit: Optional[int] = None) -> SearchResultCollection:
+              salary_min: Optional[int] = None, salary_max: Optional[int] = None,
+              max_pages: int = 5) -> SearchResultCollection:
         """
-        Search for CVs matching the given criteria.
+        Search for CVs matching the specified criteria.
         
         Args:
             keywords: List of keywords to search for
-            location: Location filter (optional)
-            limit: Maximum number of results to return (optional)
+            location: Location to search in (optional)
+            salary_min: Minimum salary (optional)
+            salary_max: Maximum salary (optional)
+            max_pages: Maximum number of pages to crawl
             
         Returns:
-            Collection of search results
+            SearchResultCollection with found CVs
         """
-        # TODO: Implement search in Phase 3.3
-        self.logger.info(f"Search not yet implemented for keywords: {keywords}")
-        return SearchResultCollection()
+        try:
+            if not self.is_authenticated:
+                self.logger.error("Not authenticated. Please authenticate first.")
+                return SearchResultCollection(results=[])
+            
+            if not self.search_manager:
+                self.logger.error("Search manager not initialized. Authentication may have failed.")
+                return SearchResultCollection(results=[])
+            
+            # Verify session is still valid
+            if not self.auth_manager.verify_session():
+                self.logger.warning("Session expired, attempting re-authentication")
+                if not self.authenticate():
+                    self.logger.error("Re-authentication failed")
+                    return SearchResultCollection(results=[])
+            
+            self.logger.info(f"Starting CV search for keywords: {keywords}")
+            
+            # Perform the search
+            if self.search_manager.search_cvs(keywords, location, salary_min, salary_max):
+                self.logger.info("Search form submitted successfully")
+                
+                # Parse results from current page (optimized for single page)
+                results = self.search_manager.parse_search_results()
+                
+                # Only get additional pages if we have results and want multiple pages
+                if results.results and max_pages > 1:
+                    # Check if there are more pages and get them
+                    if self.search_manager.has_next_page():
+                        all_results = self.search_manager.get_all_results(max_pages)
+                        results = all_results
+                
+                self.logger.info(f"Search completed: {len(results.results)} CVs found")
+                return results
+            else:
+                self.logger.error("Failed to perform search")
+                return SearchResultCollection(
+                    results=[],
+                    search_keywords=keywords,
+                    search_location=location
+                )
+                
+        except Exception as e:
+            self.logger.error(f"Search error: {e}")
+            return SearchResultCollection(results=[])
     
-    def download_cvs(self, cv_list: List[CVData]) -> Dict[str, Any]:
+    def download_cvs(self, search_results: SearchResultCollection, 
+                    quantity: Optional[int] = None) -> List[CVData]:
         """
-        Download the specified CVs.
+        Download CVs from search results.
         
         Args:
-            cv_list: List of CV data objects to download
+            search_results: Collection of search results to download from
+            quantity: Number of CVs to download (overrides settings if provided)
             
         Returns:
-            Dictionary with download results and statistics
+            List of downloaded CVData objects
         """
-        # TODO: Implement download in Phase 3.4
-        self.logger.info(f"Download not yet implemented for {len(cv_list)} CVs")
-        return {
-            'total_requested': len(cv_list),
-            'successful_downloads': 0,
-            'failed_downloads': 0,
-            'download_paths': []
-        }
-    
-    def run_session(self, keywords: List[str], location: Optional[str] = None,
-                   quantity: Optional[int] = None) -> Dict[str, Any]:
-        """
-        Run a complete scraping session: authenticate, search, and download.
+        if not self.is_authenticated:
+            self.logger.error("Must be authenticated before downloading CVs")
+            return []
         
-        Args:
-            keywords: Keywords to search for
-            location: Location filter
-            quantity: Number of CVs to download
-            
-        Returns:
-            Session results and statistics
-        """
-        self.logger.info("Starting CV-Library scraping session")
-        
-        session_results = {
-            'session_id': self.utils.session_manager.generate_session_id() if self.utils.session_manager else 'test_session',
-            'keywords': keywords,
-            'location': location,
-            'requested_quantity': quantity or self.settings.download.max_quantity,
-            'authentication_successful': False,
-            'search_results': None,
-            'download_results': None,
-            'total_time': 0,
-            'errors': []
-        }
+        if not self.download_manager:
+            self.logger.error("Download manager not initialized")
+            return []
         
         try:
-            # Phase 1: Authentication
-            self.logger.info("Phase 1: Authenticating with CV-Library")
-            if not self.authenticate():
-                session_results['errors'].append("Authentication failed")
-                return session_results
+            # Use provided quantity or fall back to settings
+            download_quantity = quantity or self.settings.download.max_quantity
             
-            session_results['authentication_successful'] = True
+            # Start download process directly (no redundant logging)
+            downloaded_cvs = self.download_manager.download_cvs_from_results(
+                driver=self.get_webdriver(),
+                search_results=search_results,
+                max_downloads=download_quantity
+            )
             
-            # Phase 2: Search
-            self.logger.info(f"Phase 2: Searching for CVs with keywords: {keywords}")
-            search_results = self.search(keywords, location, quantity)
-            session_results['search_results'] = {
-                'total_found': len(search_results),
-                'results': search_results.to_dict()
-            }
-            
-            # Phase 3: Download
-            if len(search_results) > 0:
-                self.logger.info(f"Phase 3: Downloading {len(search_results)} CVs")
-                cv_list = search_results.to_cv_data_list()
-                download_results = self.download_cvs(cv_list)
-                session_results['download_results'] = download_results
-            
-            self.logger.info("Scraping session completed successfully")
+            return downloaded_cvs
             
         except Exception as e:
-            self.logger.error(f"Error in scraping session: {e}", exc_info=True)
-            session_results['errors'].append(str(e))
+            self.logger.error(f"Download process failed: {e}")
+            return []
+    
+    def run_session(self, keywords: List[str], location: Optional[str] = None,
+                   max_downloads: Optional[int] = None) -> Dict[str, Any]:
+        """
+        Run a complete scraping session: authenticate, search, and download CVs.
         
-        return session_results
+        Args:
+            keywords: List of keywords to search for
+            location: Location to search in (optional)
+            max_downloads: Maximum number of CVs to download (optional)
+            
+        Returns:
+            Dictionary containing session results and statistics
+        """
+        try:
+            session_start = time.time()
+            results = {
+                'session_id': self.session_id,
+                'keywords': keywords,
+                'location': location,
+                'status': 'started',
+                'authentication': False,
+                'search_results': None,
+                'download_results': None,
+                'error': None,
+                'duration': 0
+            }
+            
+            self.logger.info("🔍 Starting scraping session for keywords: %s", " ".join(keywords))
+            self.logger.info("Starting scraping session: %s", self.session_id)
+            
+            # Phase 1: Authentication (optimized)
+            self.logger.info("Phase 1: Authenticating with CV-Library")
+            if not self.authenticate():
+                results['error'] = "Authentication failed"
+                results['status'] = 'failed'
+                return results
+            
+            results['authentication'] = True
+            
+            # Initialize search and download managers with authenticated driver (already done in authenticate)
+            if not self.search_manager:
+                self.search_manager = SearchManager(self.settings, self.get_webdriver())
+            if not self.download_manager:
+                self.download_manager = DownloadManager(self.settings)
+            
+            # Phase 2: Search for CVs (streamlined)
+            self.logger.info("Phase 2: Searching for CVs")
+            search_results = self.search(keywords, location)
+            if not search_results or not search_results.results:
+                results['error'] = "Search failed or no results found"
+                results['status'] = 'failed'
+                return results
+            
+            # Store search results info (optimized - no name extraction for large result sets)
+            results['search_results'] = {
+                'total_found': len(search_results.results),
+                'candidates': [result.name for result in search_results.results[:min(5, len(search_results.results))]]  # Only extract names for first 5
+            }
+            
+            # Phase 3: Download CVs (optimized)
+            self.logger.info("Phase 3: Downloading CVs")
+            
+            if max_downloads:
+                target_downloads = max_downloads
+            else:
+                target_downloads = self.settings.download.max_quantity
+            
+            downloaded_cvs = self.download_cvs(search_results, target_downloads)
+            
+            results['download_results'] = {
+                'successful_downloads': len(downloaded_cvs),
+                'failed_downloads': len(search_results.results) - len(downloaded_cvs),
+                'download_summary': self.download_manager.get_download_summary() if self.download_manager else {}
+            }
+            
+            # Session completion
+            session_duration = time.time() - session_start
+            results['duration'] = session_duration
+            results['status'] = 'completed'
+            
+            self.logger.info("🎉 Scraping session completed!")
+            self.logger.info("✅ Total time: %.2f seconds", session_duration)
+            self.logger.info("✅ CVs downloaded: %d", len(downloaded_cvs))
+            
+            return results
+            
+        except Exception as e:
+            self.logger.error("❌ Scraping session failed: %s", e)
+            results['error'] = str(e)
+            results['status'] = 'failed'
+            results['duration'] = time.time() - session_start
+            return results
     
-    def save_session(self, session_data: Dict[str, Any]):
-        """Save session data for resuming later."""
-        if self.utils.session_manager:
-            session_id = session_data.get('session_id', 'unknown')
-            self.utils.session_manager.save_session_data(session_id, session_data)
+    def verify_authentication(self) -> bool:
+        """
+        Verify current authentication status.
+        
+        Returns:
+            True if authenticated and session is valid, False otherwise
+        """
+        if not self.is_authenticated or not self.auth_manager:
+            return False
+        
+        return self.auth_manager.verify_session()
     
-    def load_session(self, session_id: str) -> Optional[Dict[str, Any]]:
-        """Load session data from file."""
-        if self.utils.session_manager:
-            return self.utils.session_manager.load_session_data(session_id)
+    def logout(self) -> bool:
+        """
+        Logout from CV-Library.
+        
+        Returns:
+            True if logout successful, False otherwise
+        """
+        try:
+            if self.auth_manager:
+                success = self.auth_manager.logout()
+                if success:
+                    self.is_authenticated = False
+                    self.search_manager = None
+                    self.download_manager = None
+                return success
+            return True
+        except Exception as e:
+            self.logger.error(f"Logout error: {e}")
+            return False
+    
+    def save_session(self, session_data: Optional[Dict] = None) -> bool:
+        """
+        Save current session data to file.
+        
+        Args:
+            session_data: Session data to save (optional, uses current if not provided)
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            data_to_save = session_data or self.current_session_data
+            if not data_to_save:
+                self.logger.warning("No session data to save")
+                return False
+            
+            session_file = Path(self.settings.session.session_path) / f"{self.session_id}.json"
+            return self.utils.session_manager.save_session(data_to_save, session_file)
+            
+        except Exception as e:
+            self.logger.error(f"Failed to save session: {e}")
+            return False
+    
+    def load_session(self, session_file: Path) -> Dict[str, Any]:
+        """
+        Load session data from file.
+        
+        Args:
+            session_file: Path to session file
+            
+        Returns:
+            Dictionary with session data
+        """
+        try:
+            return self.utils.session_manager.load_session(session_file)
+        except Exception as e:
+            self.logger.error(f"Failed to load session: {e}")
+            return {}
+    
+    def get_webdriver(self):
+        """Get the current WebDriver instance."""
+        if self.auth_manager:
+            return self.auth_manager.get_driver()
         return None
     
     def close(self):
-        """Clean up resources and close the scraper."""
-        self.logger.info("Closing CV-Library scraper")
-        # TODO: Close browser, clean up files, etc.
-        pass 
+        """Clean up resources and close connections."""
+        try:
+            self.logger.info("Closing CV-Library scraper")
+            
+            # IMPORTANT: Logout first to release the session on CV-Library
+            if self.is_authenticated and self.auth_manager:
+                self.logger.info("Logging out to release CV-Library session")
+                logout_success = self.auth_manager.logout()
+                if logout_success:
+                    self.logger.info("Successfully logged out from CV-Library")
+                else:
+                    self.logger.warning("Logout may have failed, but continuing cleanup")
+            
+            # Close authentication manager (this will close WebDriver)
+            if self.auth_manager:
+                self.auth_manager.close()
+            
+            # Reset state
+            self.is_authenticated = False
+            self.search_manager = None
+            self.download_manager = None
+            
+            self.logger.info("CV-Library scraper closed successfully")
+            
+        except Exception as e:
+            self.logger.error(f"Error during cleanup: {e}")
+            # Even if there's an error, try to reset state
+            self.is_authenticated = False
+            self.search_manager = None
+            self.download_manager = None 

@@ -150,6 +150,32 @@ Examples:
         choices=['true', 'false'],
         help='Run browser in headless mode (true/false)'
     )
+    browser_group.add_argument(
+        '--enable-persistent-profile',
+        action='store_true',
+        help='Enable persistent browser profile (recommended for single-session compliance)'
+    )
+    browser_group.add_argument(
+        '--disable-persistent-profile',
+        action='store_true',
+        help='Disable persistent browser profile (use temporary sessions)'
+    )
+    browser_group.add_argument(
+        '--profile-name',
+        type=str,
+        default='default',
+        help='Name of the browser profile to use (default: default)'
+    )
+    browser_group.add_argument(
+        '--clear-profile',
+        action='store_true',
+        help='Clear the browser profile before starting (fresh session)'
+    )
+    browser_group.add_argument(
+        '--backup-profile',
+        action='store_true',
+        help='Create a backup of the profile before starting'
+    )
     
     # Session management
     session_group = parser.add_argument_group('Session Management')
@@ -268,6 +294,23 @@ def create_settings_from_args(args) -> Settings:
     if args.headless:
         settings.browser.headless = args.headless.lower() == 'true'
     
+    # Handle persistent profile arguments
+    if args.enable_persistent_profile:
+        settings.browser.profile.enable_persistent_profile = True
+    
+    if args.disable_persistent_profile:
+        settings.browser.profile.enable_persistent_profile = False
+    
+    if args.profile_name:
+        settings.browser.profile.profile_name = args.profile_name
+    
+    if args.backup_profile:
+        settings.browser.profile.auto_backup = True
+        settings.browser.profile.backup_on_login = True
+    
+    if args.clear_profile:
+        settings.browser.profile.clear_on_logout = True
+    
     if args.log_path:
         settings.logging.log_path = args.log_path
     
@@ -299,12 +342,25 @@ def print_settings_summary(settings: Settings):
     print(f"   Download Quantity: {settings.download.max_quantity}")
     print(f"   Download Path: {settings.download.download_path}")
     print(f"   Browser: {settings.browser.browser_type} (headless: {settings.browser.headless})")
+    
+    # Show profile information
+    if settings.browser.profile.enable_persistent_profile:
+        print(f"   Profile: {settings.browser.profile.profile_name} (persistent)")
+        if settings.browser.profile.auto_backup:
+            print("   Profile Backup: Enabled")
+        if settings.browser.profile.clear_on_logout:
+            print("   Clear on Logout: Enabled")
+    else:
+        print("   Profile: Temporary session")
+    
     print(f"   Rate Limiting: {settings.scraping.delay_min}-{settings.scraping.delay_max}s delays")
     print()
 
 
 def main():
     """Main application entry point."""
+    
+    scraper = None  # Initialize scraper variable for finally block
     
     try:
         # Parse arguments
@@ -344,7 +400,24 @@ def main():
         # Initialize scraper
         scraper = CVLibraryScraper(settings)
         
+        # Handle profile management
+        if args.clear_profile and settings.browser.profile.enable_persistent_profile:
+            from src.scraper.browser_profile import BrowserProfileManager
+            profile_manager = BrowserProfileManager(settings)
+            profile_manager.clear_profile(settings.browser.profile.profile_name)
+            print(f"✅ Profile '{settings.browser.profile.profile_name}' cleared")
+        
         print("🚀 CV-Library Scraper initialized successfully!")
+        
+        # Show profile information if using persistent profiles
+        if settings.browser.profile.enable_persistent_profile:
+            from src.scraper.browser_profile import BrowserProfileManager
+            profile_manager = BrowserProfileManager(settings)
+            profile_info = profile_manager.get_profile_info(settings.browser.profile.profile_name)
+            print(f"📁 Using persistent profile: {profile_info['name']}")
+            if profile_info.get('exists'):
+                print(f"   Size: {profile_info.get('size_mb', 0):.1f} MB")
+                print(f"   Has session data: {'Yes' if profile_info.get('has_metadata') else 'No'}")
         
         if args.dry_run:
             print("   🔍 Dry run mode - no actual scraping will be performed")
@@ -356,27 +429,33 @@ def main():
             print("   5. 📊 Generate reports")
             return 0
         
-        # Run scraping session if not dry run
+        # Run scraping session
         if settings.search.keywords:
             print(f"\n🔍 Starting scraping session for keywords: {', '.join(settings.search.keywords)}")
             
-            # Run the scraper
             session_results = scraper.run_session(
                 keywords=settings.search.keywords,
                 location=settings.search.locations[0] if settings.search.locations else None,
-                quantity=settings.download.max_quantity
+                max_downloads=settings.download.max_quantity
             )
             
             # Print results
             print(f"\n📊 Session Results:")
             print(f"   Session ID: {session_results['session_id']}")
             print(f"   Keywords: {', '.join(session_results['keywords'])}")
-            print(f"   Authentication: {'✅ Success' if session_results['authentication_successful'] else '❌ Failed'}")
+            print(f"   Status: {'✅ Success' if session_results.get('status') == 'completed' else '❌ Failed'}")
+            print(f"   Duration: {session_results.get('duration', 0):.2f} seconds")
             
-            if session_results['errors']:
-                print(f"   Errors: {len(session_results['errors'])}")
-                for error in session_results['errors']:
-                    print(f"     • {error}")
+            if session_results.get('search_results'):
+                search_info = session_results['search_results']
+                print(f"   Search Results: {search_info.get('total_found', 0)} candidates found")
+            
+            if session_results.get('download_results'):
+                download_info = session_results['download_results']
+                print(f"   Downloads: {download_info.get('successful_downloads', 0)} successful, {download_info.get('failed_downloads', 0)} failed")
+            
+            if session_results.get('error'):
+                print(f"   Error: {session_results['error']}")
             
             # Save session if requested
             if args.save_session:
@@ -386,13 +465,12 @@ def main():
         else:
             print("\n⚠️  No keywords specified. Use --keywords or --config to define search criteria.")
         
-        # Clean up
-        scraper.close()
-        
         return 0
         
     except KeyboardInterrupt:
         print("\n\n⚠️  Operation cancelled by user")
+        logger = logging.getLogger('cv_scraper')
+        logger.warning("Application interrupted by user")
         return 1
         
     except Exception as e:
@@ -400,6 +478,20 @@ def main():
         logger.error(f"Unexpected error: {e}", exc_info=True)
         print(f"\n❌ Error: {e}")
         return 1
+    
+    finally:
+        # CRITICAL: Always ensure cleanup, even if main() is interrupted
+        if scraper:
+            try:
+                print("\n🧹 Cleaning up...")
+                scraper.close()
+                print("✅ Cleanup completed")
+            except Exception as cleanup_error:
+                print(f"⚠️  Error during cleanup: {cleanup_error}")
+                logger = logging.getLogger('cv_scraper')
+                logger.error(f"Cleanup error: {cleanup_error}")
+        else:
+            print("✅ No cleanup needed")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,28 @@
+services:
+  cv-scraper:
+    build: .
+    container_name: cv-library-scraper
+    environment:
+      - HEADLESS=true
+      - CV_LIBRARY_USERNAME=${CV_LIBRARY_USERNAME}
+      - CV_LIBRARY_PASSWORD=${CV_LIBRARY_PASSWORD}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount directories to persist data
+      - ./downloaded_cvs:/app/downloaded_cvs
+      - ./logs:/app/logs
+      - ./sessions:/app/sessions
+      - ./.env:/app/.env:ro
+      - ./config:/app/config
+    command: ["--keywords", "Python developer", "--quantity", "5", "--headless", "true"]
+    
+    # Uncomment for interactive mode (non-headless)
+    # environment:
+    #   - HEADLESS=false
+    #   - DISPLAY=:99
+    # command: ["--keywords", "Python developer", "--quantity", "5", "--headless", "false"]
+    
+    # For debugging
+    # command: ["bash"]
+    # stdin_open: true
+    # tty: true 

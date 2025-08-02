@@ -4,6 +4,6 @@ tasks.md
 
 requirements.md
 
-logs/
+logs/*
 
-sessions/
+sessions/*
