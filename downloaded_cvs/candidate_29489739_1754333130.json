@@ -1,0 +1,58 @@
+{
+  "search_result": {
+    "cv_id": "29489739",
+    "name": "Aryas Karimi",
+    "search_rank": 1,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/29489739?distance=10&enc_hl=24%3Am3QbaGWvXfCx2FPRnENbC7BX8_w1pQhi%3A0ZJWhqThfbBNy3msX9plB3kvtBfv8EWcm4WUROYSVhE&enc_keywords=24%3A0X6WTuxd-q3YlZdHaCAEGxypJVwrusgO%3ANkSxFBkGtSHgAjVC2xaqXyje5p1qgedgQA9jwZrPLsGRcA&location=&sid=bb3c3c05-419d-4d9c-b136-b186e29966b4&stem_phrases=",
+    "profile_match_percentage": "100% Match",
+    "profile_cv_last_updated": "01/08/2025 14:28",
+    "last_viewed_date": "04/08/2025 (19:42)",
+    "search_keywords": [
+      "Python developer"
+    ]
+  },
+  "candidate_info": {
+    "name": "Aryas Karimi",
+    "quickview_ref": "29489739",
+    "date_registered": "01/08/2025",
+    "profile_last_updated": "01/08/2025 (14:28)",
+    "last_active": "01/08/2025 (14:28)",
+    "personal_job_details": {
+      "town": "Birmingham",
+      "county": "West Midlands",
+      "location": "Birmingham, West Midlands",
+      "main_phone": "+447355656554",
+      "optional_phone": "447355656554",
+      "email": "aryaskarimi34@gmail.com",
+      "current_job_title": "Python Developer",
+      "desired_job_title": "Python Developer",
+      "job_type": "Permanent",
+      "willing_to_travel": "Up to 10 miles",
+      "willing_to_relocate": "No",
+      "uk_driving_licence": "Yes",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£30,001 - £40,000"
+    },
+    "candidates_chosen_industries": [
+      "IT/Internet/Technical"
+    ],
+    "candidates_main_skills": [
+      "Analytics",
+      "Mentoring",
+      "Best Practice",
+      "Back End",
+      "REST API",
+      "FastAPI",
+      "eCommerce",
+      "pandas",
+      "CI/CD",
+      "Docker",
+      "Git",
+      "Machine Learning",
+      "NumPy",
+      "Stream Processing",
+      "Python Programming"
+    ]
+  }
+}

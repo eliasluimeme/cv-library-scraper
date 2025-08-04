@@ -12,14 +12,14 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Ivan Saddi
-Quickview Ref# 29227875
-Date Registered: 04/06/2025   Profile/CV Last Updated: 06/06/2025 (15:57)   Last Active: 28/07/2025 (10:56)
+Aryas Karimi
+Quickview Ref# 29489739
+Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (14:28)   Last Active: 01/08/2025 (14:28)
 Personal & Job Details
 Town
-Stafford
+Birmingham
 County
-Staffordshire
+West Midlands
 Main Phone
 View contact details
 Optional Phone
@@ -29,42 +29,39 @@ View contact details
 Fluent Languages
 N/A
 Date Available
-Immediately
+N/A
 Current Job Title
 Python Developer
 Desired Job Title
 Python Developer
 Job Type
-Contract, Part Time, Permanent, Temporary
+Permanent
 Willing to Travel
-Up to 50 miles
+Up to 10 miles
 Willing to Relocate
 No
 UK Driving Licence
-No
+Yes
 Expected Salary
-£40,001 - £60,000
+£30,001 - £40,000
 Candidates Chosen Industries
 IT/Internet/Technical
 Candidates Main Skills
-Python
-PostgreSQL
-mySQL
-Django
-Tornado
-AWS
-Neo4j
-MongoDB
-Snowflake
-Airflow
-AWS
-GIT
-Jira
-HTML
-Javascript
-CSS
-User Experience
-Managed the infrastructure
+Analytics
+Mentoring
+Best Practice
+Back End
+REST API
+FastAPI
+eCommerce
+pandas
+CI/CD
+Docker
+Git
+Machine Learning
+NumPy
+Stream Processing
+Python Programming
 Recruiter Options
 Download CV
 Video Interview
@@ -80,13 +77,6 @@ Document
 Plain Text
 Notes
 The contact details in the CV below have been hidden View contact details
-
-
-
-
-
-
-
 
 
 
@@ -218,58 +208,55 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Ivan Saddi
-Quickview Ref# 29227875
-Date Registered: 04/06/2025   Profile/CV Last Updated: 06/06/2025 (15:57)   Last Active: 28/07/2025 (10:56)
+Aryas Karimi
+Quickview Ref# 29489739
+Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (14:28)   Last Active: 01/08/2025 (14:28)
 Personal & Job Details
 Town
-Stafford
+Birmingham
 County
-Staffordshire
+West Midlands
 Main Phone
-447879016375
++447355656554
 Optional Phone
 Email
-ivan.saddi@yahoo.com
+aryaskarimi34@gmail.com
 Fluent Languages
 N/A
 Date Available
-Immediately
+N/A
 Current Job Title
 Python Developer
 Desired Job Title
 Python Developer
 Job Type
-Contract, Part Time, Permanent, Temporary
+Permanent
 Willing to Travel
-Up to 50 miles
+Up to 10 miles
 Willing to Relocate
 No
 UK Driving Licence
-No
+Yes
 Expected Salary
-£40,001 - £60,000
+£30,001 - £40,000
 Candidates Chosen Industries
 IT/Internet/Technical
 Candidates Main Skills
-Python
-PostgreSQL
-mySQL
-Django
-Tornado
-AWS
-Neo4j
-MongoDB
-Snowflake
-Airflow
-AWS
-GIT
-Jira
-HTML
-Javascript
-CSS
-User Experience
-Managed the infrastructure
+Analytics
+Mentoring
+Best Practice
+Back End
+REST API
+FastAPI
+eCommerce
+pandas
+CI/CD
+Docker
+Git
+Machine Learning
+NumPy
+Stream Processing
+Python Programming
 Recruiter Options
 Download CV
 Video Interview
@@ -285,13 +272,6 @@ Report this CV
 Document
 Plain Text
 Notes
-
-
-
-
-
-
-
 
 
 

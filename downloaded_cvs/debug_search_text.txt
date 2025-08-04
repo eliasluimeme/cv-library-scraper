@@ -14,7 +14,7 @@ Re-auth Social Posting
 Boolean Search
 Search Builder
 CV Search Tips
-Search 21,481,663 CVs
+Search 21,486,985 CVs
 Feedback
 Search Builder Tips
 Keywords
@@ -102,7 +102,7 @@ Saved Searches
 Recent Searches
 Popular Searches
 Reset Form
-Displaying 1 to 20 of 333 results (refine)
+Displaying 1 to 20 of 330 results (refine)
             
 
             
@@ -142,7 +142,7 @@ Displaying 1 to 20 of 333 results (refine)
 3
 Next
 
-Last Viewed: 03/08/2025 (00:43)
+Last Viewed: 04/08/2025 (19:42)
 View CV
 Aryas Karimi
 100% Match
@@ -168,7 +168,7 @@ Date Available
 N/A
 Skills: Analytics Mentoring Best Practice Back End REST API FastAPI eCommerce pandas CI/CD Docker Git Machine Learning NumPy Stream Processing Python Programming
 CV Keywords: Experienced Python Developer skilled in backend development, ... Python Developer, Freelance Python Developer ... ABC Solutions, Python Developer
-Last Viewed: 03/08/2025 (00:38)
+Last Viewed: 04/08/2025 (19:26)
 View CV
 Abhishaik Reddy Pammi
 100% Match
@@ -194,7 +194,7 @@ Date Available
 Immediately
 Skills: Python C django React Sql Html css aws User Experience Best Practice Requirements Gathering efficient data management managed CI Managed the migration Excellent problem-so
 CV Keywords: Role: Python Developer ... Role: Junior Python Developer
-Last Viewed: 03/08/2025 (00:32)
+Last Viewed: 04/08/2025 (18:24)
 View CV
 Nishish Doshi
 99% Match
@@ -220,6 +220,7 @@ Date Available
 Immediately
 Skills: Python3 SQL NoSQL REST API Swagger UI RabbitMQ Message Broker Kafka Data Streaming Microservices with Python AWS S3|EC2|RDS|Lambda|SQS|Redshift Quantitative Development
 CV Keywords: Experienced Python developer with a quantitative finance background ... Python Developer - Retirement and Mortgage Solutions ... Python Developer - IT Development (Contract) ... Python Developer - Shell LNG Marketing & Trading ... Python Developer - Investment Attribution (Contract)
+Last Viewed: 04/08/2025 (17:39)
 View CV
 Vishal Kumar Senthil Kumar
 99% Match
@@ -245,6 +246,7 @@ Date Available
 Immediately
 Skills: Python Django REST API Flask FastAPI SQL RAG Retrieval-Augmented-Generation LangChain LangGraph Airflow Docker Kubernetes Terraform AWS Apache Spark Prompt Engineering
 CV Keywords: Senior Python Developer ... Highly skilled Python Developer with 4+ years of experience delivering ... Senior Python Developer
+Last Viewed: 04/08/2025 (17:39)
 View CV
 Endi Sefa
 99% Match
@@ -270,6 +272,7 @@ Date Available
 Immediately
 Skills: Best Practice Mentoring effective code management Analytics Dashboards Excellent problem-solving skills Eye for Detail Moodle Problem Solving Sofware Development Teamwork
 CV Keywords: Python Developer
+Last Viewed: 04/08/2025 (17:39)
 View CV
 Ivan Saddi
 99% Match
@@ -295,31 +298,7 @@ Date Available
 Immediately
 Skills: Python PostgreSQL mySQL Django Tornado AWS Neo4j MongoDB Snowflake Airflow AWS GIT Jira HTML Javascript CSS User Experience Managed the infrastructure
 CV Keywords: Experienced Python Developer with 10+ years of expertise in backend ... Python Developer (Remote Multiple Projects between 2018
-View CV
-S Somaraj
-98% Match
-Profile/CV Last Updated: 03/06/2025 14:12
-Add Note | Select
-Location
-Wandsworth, Greater London
-Willing to Travel
-Anywhere
-Salary
-£80,001 - £100,000
-Willing to Relocate
-No
-Job Title
-Python Developer
-UK Driving Licence
-Yes
-Desired Role
-Python Developer
-Job Type
-Contract, Part Time, Permanent, Temporary
-Date Available
-Immediately
-Skills: Financial Instruments Foreign Exchange Commodities Futures Operations Quantitative Finance Stochastic Calculus Counterparty risk analysis Market Risk Basel Capital Accord > Basel III
-CV Keywords: Quant Developer / Python Developer ... Python Developer – Rik Model Validation
+Last Viewed: 04/08/2025 (17:39)
 View CV
 Muhammad Awais
 98% Match
@@ -345,6 +324,7 @@ Date Available
 N/A
 Skills: Best Practice Strong problem-solving skills Time Management Debugging Back End Python Programming Django Unit Testing RESTful Code Review Data Processing Database Design
 CV Keywords: ➢ Python Developer
+Last Viewed: 04/08/2025 (17:39)
 View CV
 Bhanu V
 98% Match
@@ -370,6 +350,7 @@ Date Available
 Immediately
 Skills: Design testing development Requirements Gathering Front End SDLC Software Development Life Cycle Agile Methodology Amazon Web Services Bash Shell cascading style sheets Git HTML
 CV Keywords: PYTHON DEELOPER ... Role: Python Deeloper
+Last Viewed: 04/08/2025 (17:39)
 View CV
 Seraphina Anderson
 98% Match
@@ -395,12 +376,10 @@ Date Available
 N/A
 Skills: Programming languages: Python HTML CSS shell (Bash) Programming languages learning: C++ JavaScript R C# Java Solidity Golang Web scraping frameworks: Scrapy Kofax Kapow Pyth
 CV Keywords: – Contract Python Engineer Data Specialist | Systems Thinker Email: | Phone: LinkedIn: | GitHub: Location: Remote or Hybrid (London & ) | Availability: August 2025 Professional Summary Engineer with 12+ years’ experience: in Python, cybersecurity, and strategic tooling. I design robust systems—from threat intelligence pipelines to AI recommenders—blending analytical rigor with creati...
-Create Watchdog
-Get new candidates matching this search sent straight to your inbox.
-Create Watchdog
+Last Viewed: 04/08/2025 (17:40)
 View CV
 Rejul Bhat
-97% Match
+98% Match
 Profile/CV Last Updated: 14/07/2025 16:31
 Add Note | Select
 Location
@@ -423,6 +402,10 @@ Date Available
 1 week
 Skills: Eye for Detail Agile project development Problem Solving Teamwork Time Management Microservices REST API Prompt Engineering Python Programming efficient deployment
 CV Keywords: Senior Systems Engineer Experienced Python professional with a proven track record of three years in hands-on development and operations. Actively seeking a challenging role within a dynamic organization to apply my expertise in the Python, and related technologies. Eager to contribute my skills and drive sustained professional advancement. PROFESSIONAL EXPERIENCE Senior Systems Engineer ...
+Create Watchdog
+Get new candidates matching this search sent straight to your inbox.
+Create Watchdog
+Last Viewed: 04/08/2025 (17:40)
 View CV
 Tej C
 97% Match
@@ -448,6 +431,7 @@ Date Available
 Immediately
 Skills: Python SQL Django Azure Azure Data Bricks HTML CSS Requirements Gathering Analytics Business Requirements feature selection manage the data extraction time experience
 CV Keywords: a Data Engineer London, UK www.linkedin.om/in/vt99/ Professional Summary ertified Data Engineer with 4+ years of experiene in building and optimizing data platforms using Mirosoft Azure. Speialized in ETL pipelines, lakehouse arhitetures, and real-time analytis solutions using ADF, Databriks, Synapse, and Delta Lake. Hands-on experiene on AWS(E2, Glue, S3). Adept at handling large-sale str...
+Last Viewed: 04/08/2025 (17:40)
 View CV
 Curtis Booth
 97% Match
@@ -473,6 +457,7 @@ Date Available
 Immediately
 Skills: Best Practice Business Objectives Compliance GDPR Implemented monitoring project Management LinkedIn Product Management Soft Skills manage orders Full Stack browsing experience
 CV Keywords: Full-Stack Developer | Python & Django Specialist � | � �cjbwebdevelopment.com | GitHub: cjbwebdev | LinkedIn: Professional Summary Innovative and product-focused Python Software Engineer with over 7 years of full-stack development experience, specializing in Django-based backend architecture and modern JavaScript frontend frameworks. Adept at designing scalable solutions from scratch, l...
+Last Viewed: 04/08/2025 (17:40)
 View CV
 SHANE WILSON
 97% Match
@@ -498,9 +483,10 @@ Date Available
 2 weeks
 Skills: Python Oracle APEX Pro*C/C++ AWS Nuclear Plant Continuous Improvement Stakeholder Engagement branch management Python Programming Amazon Web Services Microservices
 CV Keywords: Python Developer with extensive experience across ... Python Developer
+Last Viewed: 04/08/2025 (17:40)
 View CV
 Jyotiben Sonagra
-96% Match
+97% Match
 Profile/CV Last Updated: 09/07/2025 16:04
 Add Note | Select
 Location
@@ -523,6 +509,7 @@ Date Available
 1 week
 Skills: API Amazon Web Services AngularJS Cascading Style Sheets Client-side Database servers Databases Django HTML JavaScript Machine Learning Microsoft ASP.NET MySQL Odoo Oracle
 CV Keywords: Dynamic and results-driven Full-Stack Python Developer with over 5 years of ... Python Developer ... Python Developer
+Last Viewed: 04/08/2025 (17:40)
 View CV
 MUHAMMAD JAHANZAIB A KHAN
 96% Match
@@ -548,6 +535,7 @@ Date Available
 N/A
 Skills: User-Friendly Project Execution link analysis backlink management User Experience responsive user experience Enthusiasm WordPress Cascading Style Sheets Back End JavaScript
 CV Keywords: Web & Python Developer
+Last Viewed: 04/08/2025 (17:40)
 View CV
 Savita Panwar
 96% Match
@@ -573,6 +561,7 @@ Date Available
 1 month
 Skills: 1. Data Analytics: NumPy Pandas Scikit-Learn Spreadsheets Python Jasper Studio Sqlalchemy Prophet 2. Database: SQL Server MySQL Oracle MSSQL 3. Data Visualisation: Power BI Tabl
 CV Keywords: - | LinkedIn: Email: Contact: 0 | LinkedIn: Email: Contact: Professional Summary Experienced Computing & IT educator with 20+ years of teaching IT, with real-world industry experience in both academic and practical environments. Adept at curriculum planning, assessment, and fostering engaging learning environments. Passionate about integrating emerging technologies and EdTech to...
+Last Viewed: 04/08/2025 (17:41)
 View CV
 Rajvamsi Chenna
 96% Match
@@ -598,9 +587,10 @@ Date Available
 N/A
 Skills: Business Strategy Best Practice analysis Systems Implementation maintenance exceptional support Analytics Dashboards Problem Solving Salesforce.com Ensured successful deployment
 CV Keywords: , UK | | | GitHub Proﬁle CAREER SNAPSHOT Data Scien3st with over 2 years of experience in developing and deploying AI/ML models for retail and ﬁnancial clients. Skilled in Python, SQL, TensorFlow, and PyTorch, with a focus on predic3ve analy3cs and LLMs. Proven track record in op;mizing processes, automa;ng ETL, and building AI-driven solu3ons that enhance customer engagement and decisionm...
+Last Viewed: 04/08/2025 (17:41)
 View CV
 Florin Dumitrascu
-95% Match
+96% Match
 Profile/CV Last Updated: 23/07/2025 11:54
 Add Note | Select
 Location
@@ -623,6 +613,7 @@ Date Available
 1 month
 Skills: Python C++ RestAPI - FastApi PostgresSql SqlAlchemy Celery Redis CSS HTML Vue JavaScript AWS GitHub GitHub Actions TDD Micro-Services Docker Jira Agile Bitbucket
 CV Keywords: Python Developer(Pandas, Pytest, Pydantic).
+Last Viewed: 04/08/2025 (17:41)
 View CV
 Saranya Ramakrishnan
 95% Match
@@ -648,12 +639,40 @@ Date Available
 1 month
 Skills: Senior python developer Senior pyspark developer Lead data engineer ETL developer
 CV Keywords: R , UK| | | | LinkedIn Profile Highly skilled and results-driven Lead Data Engineer with over 16 years of experience in architecting, designing, building, and optimizing large-scale data platforms and pipelines. Proven expertise in leveraging modern data stack technologies such as Python, Pyspark, AWS (S3, Glue, lambda and other services), Hive, MWAA, Apache Airflow, Snowflake, DBT (Data B...
+Last Viewed: 04/08/2025 (17:41)
+View CV
+Anmol Tomar
+95% Match
+Profile/CV Last Updated: 21/06/2025 21:24
+Add Note | Select
+Location
+Whitley, West Midlands
+Willing to Travel
+Anywhere
+Salary
+£1 - £10,000
+Willing to Relocate
+No
+Job Title
+Python Developer
+UK Driving Licence
+No
+Desired Role
+N/A
+Job Type
+Part Time
+Date Available
+N/A
+Skills: Problem Solving Eye for Detail Stakeholder Requirements Machine Learning MySQL Amazon Web Services C Programming Language Cascading Style Sheets Databases Debugging Django Git
+CV Keywords: Python developer ... Python developer intern | august 2024 - january 2025
 Create CV Watchdog
 Save this search and get matching CVs straight to your inbox as soon as a candidate registers.
 Save this Search as Watchdog
 Actions
 Save this Search
-1-20 of 333 results (refine)
+▼
+Recently Viewed CVs
+1-20 of 330 results (refine)
 1
 2
 3

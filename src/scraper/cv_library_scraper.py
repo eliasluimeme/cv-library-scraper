@@ -87,7 +87,7 @@ class CVLibraryScraper:
     
     def search(self, keywords: List[str], location: Optional[str] = None, 
               salary_min: Optional[int] = None, salary_max: Optional[int] = None,
-              max_pages: int = 5) -> SearchResultCollection:
+              max_pages: int = 5, target_results: Optional[int] = None) -> SearchResultCollection:
         """
         Search for CVs matching the specified criteria.
         
@@ -97,6 +97,7 @@ class CVLibraryScraper:
             salary_min: Minimum salary (optional)
             salary_max: Maximum salary (optional)
             max_pages: Maximum number of pages to crawl
+            target_results: Target number of results needed (for automatic pagination)
             
         Returns:
             SearchResultCollection with found CVs
@@ -123,17 +124,84 @@ class CVLibraryScraper:
             if self.search_manager.search_cvs(keywords, location, salary_min, salary_max):
                 self.logger.info("Search form submitted successfully")
                 
-                # Parse results from current page (optimized for single page)
+                # Parse results from current page first
                 results = self.search_manager.parse_search_results()
                 
-                # Only get additional pages if we have results and want multiple pages
-                if results.results and max_pages > 1:
-                    # Check if there are more pages and get them
-                    if self.search_manager.has_next_page():
-                        all_results = self.search_manager.get_all_results(max_pages)
-                        results = all_results
+                # Get total available results for better decision making
+                total_available = getattr(self.search_manager, 'total_results', 0)
+                results_per_page = getattr(self.search_manager, 'results_per_page', len(results.results) or 20)
                 
-                self.logger.info(f"Search completed: {len(results.results)} CVs found")
+                self.logger.info(f"📊 First page results: {len(results.results)} found")
+                if total_available > 0:
+                    self.logger.info(f"📊 Total available results: {total_available}")
+                
+                # Determine if we need more pages
+                need_more_results = False
+                pagination_reason = ""
+                
+                if target_results:
+                    if len(results.results) < target_results:
+                        if total_available > 0 and total_available < target_results:
+                            # Edge case: Target exceeds available results
+                            self.logger.warning(f"⚠️  Target ({target_results}) exceeds available results ({total_available}). Will collect all available.")
+                            target_results = total_available
+                            need_more_results = len(results.results) < target_results
+                            pagination_reason = f"to collect all {total_available} available results"
+                        else:
+                            need_more_results = True
+                            pagination_reason = f"to reach target of {target_results} results"
+                    else:
+                        pagination_reason = f"target of {target_results} already met with {len(results.results)} results"
+                elif max_pages > 1:
+                    need_more_results = True
+                    pagination_reason = f"max_pages ({max_pages}) allows multiple pages"
+                else:
+                    pagination_reason = "single page requested"
+                
+                self.logger.info(f"📄 Pagination decision: {pagination_reason}")
+                
+                # Get additional pages if needed
+                if need_more_results and results.results and self.search_manager.has_next_page():
+                    self.logger.info("🔄 Fetching additional pages...")
+                    
+                    if target_results:
+                        # Calculate pages needed more intelligently
+                        current_results = len(results.results)
+                        still_needed = target_results - current_results
+                        
+                        if results_per_page > 0:
+                            estimated_pages_needed = min(max_pages, (target_results + results_per_page - 1) // results_per_page)
+                            self.logger.info(f"📊 Estimated pages needed: {estimated_pages_needed} (based on {results_per_page} results per page)")
+                            self.logger.info(f"📊 Still need: {still_needed} more results")
+                        else:
+                            estimated_pages_needed = max_pages
+                            self.logger.warning(f"⚠️  Cannot estimate pages (results_per_page=0), using max_pages={max_pages}")
+                    else:
+                        estimated_pages_needed = max_pages
+                    
+                    # Get all results across multiple pages with target limit
+                    all_results = self.search_manager.get_all_results(estimated_pages_needed, target_results)
+                    
+                    # The get_all_results method already includes the first page, so we use it directly
+                    results = all_results
+                elif not self.search_manager.has_next_page() and need_more_results:
+                    self.logger.info("📄 No additional pages available")
+                elif not need_more_results:
+                    self.logger.info("📊 No additional pages needed")
+                
+                final_count = len(results.results)
+                
+                # Final summary with edge case information
+                if target_results:
+                    if final_count >= target_results:
+                        self.logger.info(f"✅ Search SUCCESS: Found {final_count} CVs (target: {target_results})")
+                    else:
+                        self.logger.warning(f"⚠️  Search PARTIAL: Found {final_count} CVs (target: {target_results})")
+                        if total_available > 0:
+                            self.logger.info(f"📊 Available vs Found: {total_available} available, {final_count} collected")
+                else:
+                    self.logger.info(f"📊 Search completed: {final_count} CVs found")
+                
                 return results
             else:
                 self.logger.error("Failed to perform search")
@@ -231,7 +299,15 @@ class CVLibraryScraper:
             
             # Phase 2: Search for CVs (streamlined)
             self.logger.info("Phase 2: Searching for CVs")
-            search_results = self.search(keywords, location)
+            
+            # Determine target downloads first
+            if max_downloads:
+                target_downloads = max_downloads
+            else:
+                target_downloads = self.settings.download.max_quantity
+            
+            # Search with target results to enable automatic pagination
+            search_results = self.search(keywords, location, target_results=target_downloads)
             if not search_results or not search_results.results:
                 results['error'] = "Search failed or no results found"
                 results['status'] = 'failed'
@@ -245,11 +321,6 @@ class CVLibraryScraper:
             
             # Phase 3: Download CVs (optimized)
             self.logger.info("Phase 3: Downloading CVs")
-            
-            if max_downloads:
-                target_downloads = max_downloads
-            else:
-                target_downloads = self.settings.download.max_quantity
             
             downloaded_cvs = self.download_cvs(search_results, target_downloads)
             

@@ -285,125 +285,49 @@ class DownloadManager:
                 
                 # Prepare comprehensive candidate data with improved consistency
                 candidate_data = {
-                    'candidate_info': {
-                        'candidate_id': search_result.cv_id,
-                        'name': consistent_name,
-                        'title': candidate_info.title,
-                        'current_job_title': candidate_info.current_job_title,
-                        'desired_job_title': candidate_info.desired_job_title,
-                        'location': consistent_location,
-                        'town': candidate_info.town,
-                        'county': candidate_info.county,
-                        'salary_expectation': consistent_salary,
-                        'expected_salary': candidate_info.expected_salary,
-                        'experience_years': getattr(candidate_info, 'experience_years', None),
-                        'education': getattr(candidate_info, 'education', None),
-                        'skills': candidate_info.skills if candidate_info.skills else [],
-                        'main_skills': candidate_info.main_skills if candidate_info.main_skills else [],
-                        'summary': candidate_info.summary or search_result.summary,
-                        'availability': getattr(candidate_info, 'availability', None),
-                        'last_active': getattr(candidate_info, 'last_active', None),
-                        'contact_info': candidate_info.contact_info if candidate_info.contact_info else {},
-                        
-                        # Enhanced contact details
-                        'main_phone': candidate_info.main_phone,
-                        'optional_phone': candidate_info.optional_phone,
-                        'email': candidate_info.email,
-                        
-                        # Job preferences
-                        'job_type': candidate_info.job_type,
-                        'willing_to_travel': candidate_info.willing_to_travel,
-                        'willing_to_relocate': candidate_info.willing_to_relocate,
-                        'uk_driving_licence': candidate_info.uk_driving_licence,
-                        'date_available': candidate_info.date_available,
-                        'fluent_languages': candidate_info.fluent_languages if candidate_info.fluent_languages else [],
-                        
-                        # Professional details
-                        'chosen_industries': candidate_info.chosen_industries if candidate_info.chosen_industries else [],
-                        'cv_keywords': candidate_info.cv_keywords,
-                        
-                        # Profile metadata
-                        'profile_last_updated': candidate_info.profile_last_updated,
-                        'date_registered': candidate_info.date_registered,
-                        'last_viewed_date': candidate_info.last_viewed_date,
-                        'quickview_ref': candidate_info.quickview_ref,
-                        'profile_match_percentage': candidate_info.profile_match_percentage
-                    },
                     'search_result': {
+                        # ONLY the 7 essential fields from search cards
                         'cv_id': search_result.cv_id,
                         'name': search_result.name,
-                        'location': search_result.location,
-                        'town': search_result.town,
-                        'county': search_result.county,
-                        'salary': search_result.salary,
-                        'expected_salary': search_result.expected_salary,
-                        'skills': list(set(search_result.skills)) if search_result.skills else [],  # Remove duplicates
-                        'main_skills': search_result.main_skills if search_result.main_skills else [],
-                        'profile_url': search_result.profile_url,
-                        'experience_level': search_result.experience_level,
-                        'summary': search_result.summary,
                         'search_rank': search_result.search_rank,
-                        
-                        # Enhanced job details from search card
-                        'current_job_title': search_result.current_job_title,
-                        'desired_job_title': search_result.desired_job_title,
-                        'job_type': search_result.job_type,
-                        'date_available': search_result.date_available,
-                        'willing_to_travel': search_result.willing_to_travel,
-                        'willing_to_relocate': search_result.willing_to_relocate,
-                        'uk_driving_licence': search_result.uk_driving_licence,
-                        
-                        # Profile metadata from search card
+                        'profile_url': search_result.profile_url,
                         'profile_match_percentage': search_result.profile_match_percentage,
                         'profile_cv_last_updated': search_result.profile_cv_last_updated,
                         'last_viewed_date': search_result.last_viewed_date,
-                        'quickview_ref': search_result.quickview_ref,
-                        
-                        # Enhanced skills and industries from search card
-                        'chosen_industries': search_result.chosen_industries if search_result.chosen_industries else [],
-                        'cv_keywords': search_result.cv_keywords,
-                        'fluent_languages': search_result.fluent_languages if search_result.fluent_languages else []
+                        'search_keywords': search_result.search_keywords if search_result.search_keywords else []
                     },
-                    'extraction_time': time.time(),
-                    'search_keywords': search_result.search_keywords or [],
-                    'download_success': download_success,
-                    'metadata': {
-                        'extraction_source': 'CV-Library profile page',
-                        'extraction_method': 'comprehensive_extraction_v3',
-                        'data_quality': {
-                            'has_name': bool(consistent_name and consistent_name != "Unknown"),
-                            'has_location': bool(consistent_location),
-                            'has_contact': bool(candidate_info.contact_info or candidate_info.email or candidate_info.main_phone),
-                            'has_skills': bool(candidate_info.skills or candidate_info.main_skills),
-                            'data_completeness': self._calculate_data_completeness(candidate_info),
-                            'title_extracted': bool(candidate_info.title and candidate_info.title not in ['Unknown', 'N/A']),
-                            'salary_extracted': bool(consistent_salary),
-                            'contact_method': 'profile_extraction' if (candidate_info.contact_info or candidate_info.email or candidate_info.main_phone) else 'not_found',
-                            'job_preferences_extracted': bool(candidate_info.job_type or candidate_info.willing_to_travel),
-                            'profile_metadata_extracted': bool(candidate_info.profile_last_updated or candidate_info.date_registered),
-                            'enhanced_fields_count': sum([
-                                bool(candidate_info.current_job_title),
-                                bool(candidate_info.desired_job_title),
-                                bool(candidate_info.town),
-                                bool(candidate_info.county),
-                                bool(candidate_info.job_type),
-                                bool(candidate_info.willing_to_travel),
-                                bool(candidate_info.willing_to_relocate),
-                                bool(candidate_info.uk_driving_licence),
-                                bool(candidate_info.date_available),
-                                bool(candidate_info.profile_last_updated),
-                                bool(candidate_info.date_registered),
-                                bool(candidate_info.quickview_ref)
-                            ])
+                    'candidate_info': {
+                        # Essential identification
+                        'name': consistent_name,
+                        'quickview_ref': candidate_info.quickview_ref,
+                        
+                        # Profile metadata (from top of profile page)
+                        'date_registered': candidate_info.date_registered,
+                        'profile_last_updated': candidate_info.profile_last_updated,
+                        'last_active': candidate_info.last_active,  # Fix: use last_active instead of last_active_date
+                        
+                        # Personal & Job Details table (as shown in the interface)
+                        'personal_job_details': {
+                            'town': candidate_info.town,
+                            'county': candidate_info.county,
+                            'location': consistent_location,
+                            'main_phone': candidate_info.main_phone,
+                            'optional_phone': candidate_info.optional_phone,
+                            'email': candidate_info.email,
+                            'current_job_title': candidate_info.current_job_title,
+                            'desired_job_title': candidate_info.desired_job_title,
+                            'job_type': candidate_info.job_type,
+                            'willing_to_travel': candidate_info.willing_to_travel,
+                            'willing_to_relocate': candidate_info.willing_to_relocate,
+                            'uk_driving_licence': candidate_info.uk_driving_licence,
+                            'date_available': candidate_info.date_available,
+                            'fluent_languages': candidate_info.fluent_languages if candidate_info.fluent_languages else [],
+                            'expected_salary': candidate_info.expected_salary
                         },
-                        'data_consistency': {
-                            'name_match': consistent_name == search_result.name,
-                            'location_match': consistent_location == search_result.location,
-                            'skills_overlap': len(set(candidate_info.skills or []) & set(search_result.skills or [])),
-                            'job_title_consistency': candidate_info.current_job_title == search_result.current_job_title,
-                            'salary_consistency': candidate_info.expected_salary == search_result.expected_salary,
-                            'primary_data_source': 'candidate_info_preferred'
-                        }
+                        
+                        # Professional sections (as shown in the interface)
+                        'candidates_chosen_industries': candidate_info.chosen_industries if candidate_info.chosen_industries else [],
+                        'candidates_main_skills': candidate_info.main_skills if candidate_info.main_skills else []
                     }
                 }
                 
@@ -974,13 +898,18 @@ class DownloadManager:
                 self.logger.info("💼 === EXTRACTING JOB PREFERENCES ===")
                 # Extract job preferences
                 job_pref_patterns = [
-                    (r'Job Type[:\s]*([^<\n\r]+?)(?=\s*Willing|UK|$)', 'job_type'),
-                    (r'Willing to Travel[:\s]*([^<\n\r]+?)(?=\s*Willing to Relocate|UK|$)', 'willing_to_travel'),
-                    (r'Willing to Relocate[:\s]*([^<\n\r]+?)(?=\s*UK|Date|$)', 'willing_to_relocate'),
-                    (r'UK Driving Licence[:\s]*([^<\n\r]+?)(?=\s*Date|Expected|$)', 'uk_driving_licence'),
-                    (r'Date Available[:\s]*([^<\n\r]+?)(?=\s*Expected|Fluent|$)', 'date_available'),
-                    (r'Expected Salary[:\s]*([^<\n\r]+?)(?=\s*Fluent|$)', 'expected_salary'),
-                    (r'Fluent Languages[:\s]*([^<\n\r]+?)(?=\s*Candidates|$)', 'fluent_languages'),
+                    (r'Job Type[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Willing|UK|$)', 'job_type'),
+                    (r'Willing to Travel[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Willing to Relocate|UK|$)', 'willing_to_travel'),
+                    (r'Willing to Relocate[:\s]*\n?\s*([^<\n\r]+?)(?=\s*UK|Date|$)', 'willing_to_relocate'),
+                    (r'UK Driving Licence[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Expected|Date|Fluent|Candidates|$)', 'uk_driving_licence'),
+                    (r'Date Available[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Expected|Fluent|$)', 'date_available'),
+                    (r'Expected Salary[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Fluent|Candidates|$)', 'expected_salary'),
+                    (r'Fluent Languages[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Candidates|$)', 'fluent_languages'),
+                    # Additional patterns for better extraction
+                    (r'Date Registered[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Profile|Last|$)', 'date_registered'),
+                    (r'Profile/CV Last Updated[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Last Active|$)', 'profile_last_updated'),
+                    (r'Last Active[:\s]*\n?\s*([^<\n\r]+?)(?=\s*Personal|$)', 'last_active'),
+                    (r'Quickview Ref#?[:\s]*\n?\s*(\d+)', 'quickview_ref'),
                 ]
                 
                 for pattern, field_name in job_pref_patterns:
@@ -993,9 +922,21 @@ class DownloadManager:
                         elif field_name == 'expected_salary':
                             extracted_data[field_name] = pref_value
                             extracted_data['salary_expectation'] = pref_value  # For compatibility
+                        elif field_name == 'profile_last_updated':
+                            extracted_data['profile_last_updated'] = pref_value
+                            extracted_data['profile_cv_last_updated'] = pref_value  # For compatibility
+                        elif field_name == 'last_active':
+                            extracted_data['last_active'] = pref_value
+                            extracted_data['last_active_date'] = pref_value  # For compatibility
+                        elif field_name == 'quickview_ref':
+                            extracted_data['quickview_ref'] = pref_value
                         else:
                             extracted_data[field_name] = pref_value
                         self.logger.info(f"✅ Extracted {field_name}: {extracted_data[field_name]}")
+                        
+                        # Clean up N/A values
+                        if extracted_data.get(field_name) and extracted_data[field_name].upper() in ['N/A', 'NOT SPECIFIED', 'NONE']:
+                            extracted_data[field_name] = None
                 
                 self.logger.info("🛠️ === EXTRACTING PROFESSIONAL DETAILS ===")
                 # Extract professional details with enhanced debugging
@@ -1194,6 +1135,7 @@ class DownloadManager:
                 cv_keywords=extracted_data['cv_keywords'],
                 profile_last_updated=extracted_data['profile_last_updated'],
                 date_registered=extracted_data['date_registered'],
+                last_active=extracted_data['last_active'],  # Add the missing last_active field
                 last_viewed_date=extracted_data['last_viewed_date'],
                 quickview_ref=extracted_data['quickview_ref'],
                 profile_match_percentage=extracted_data['profile_match_percentage'],

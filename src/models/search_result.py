@@ -11,147 +11,67 @@ from .cv_data import CVData
 
 @dataclass
 class SearchResult:
-    """Individual search result item from CV-Library with comprehensive candidate information."""
+    """
+    Represents a single search result from CV-Library.
+    Contains only essential fields from search cards for clean, fast performance.
+    """
+    # ESSENTIAL FIELDS (always populated from search cards)
+    cv_id: str
+    name: str
+    profile_url: Optional[str] = None
+    search_rank: int = 0
+    profile_match_percentage: Optional[str] = None
+    profile_cv_last_updated: Optional[str] = None
+    last_viewed_date: Optional[str] = None
     
-    # Basic Information
-    cv_id: Optional[str] = None
-    title: Optional[str] = None
-    name: Optional[str] = None
+    # OPTIONAL FIELDS (may be empty/null to keep data structure clean)
     location: Optional[str] = None
+    town: Optional[str] = None
+    county: Optional[str] = None
     salary: Optional[str] = None
+    expected_salary: Optional[str] = None
+    skills: List[str] = field(default_factory=list)
+    main_skills: List[str] = field(default_factory=list)
+    experience_level: Optional[str] = None
     summary: Optional[str] = None
-    
-    # Enhanced Job Details (from candidate cards)
     current_job_title: Optional[str] = None
     desired_job_title: Optional[str] = None
-    job_type: Optional[str] = None  # Permanent, Contract, etc.
+    job_type: Optional[str] = None
     date_available: Optional[str] = None
     willing_to_travel: Optional[str] = None
     willing_to_relocate: Optional[str] = None
     uk_driving_licence: Optional[str] = None
-    
-    # Profile Metadata (from CV-Library interface)
-    profile_match_percentage: Optional[str] = None  # e.g., "100% Match"
-    profile_cv_last_updated: Optional[str] = None  # e.g., "01/08/2025 14:28"
-    last_viewed_date: Optional[str] = None  # e.g., "02/08/2025 (23:13)"
-    quickview_ref: Optional[str] = None  # Reference number shown in interface
-    
-    # Enhanced Skills and Experience
-    main_skills: List[str] = field(default_factory=list)  # From "Candidates Main Skills" section
-    chosen_industries: List[str] = field(default_factory=list)  # From "Candidates Chosen Industries"
-    cv_keywords: Optional[str] = None  # From "CV Keywords" section
+    quickview_ref: Optional[str] = None
+    chosen_industries: List[str] = field(default_factory=list)
+    cv_keywords: Optional[str] = None
     fluent_languages: List[str] = field(default_factory=list)
-    
-    # URLs and Links
-    profile_url: Optional[str] = None
-    cv_preview_url: Optional[str] = None
-    download_url: Optional[str] = None
-    
-    # Original Metadata (preserved for compatibility)
-    last_active: Optional[str] = None
-    experience_level: Optional[str] = None
-    availability: Optional[str] = None
-    
-    # Search Context
-    search_rank: Optional[int] = None
-    search_score: Optional[float] = None
     search_keywords: List[str] = field(default_factory=list)
-    search_location: Optional[str] = None
-    
-    # Additional Details (legacy)
-    skills: List[str] = field(default_factory=list)
-    qualifications: List[str] = field(default_factory=list)
-    industry: Optional[str] = None
-    
-    # Processing Flags
-    processed: bool = False
-    selected_for_download: bool = False
-    
-    # Additional Extracted Information
-    town: Optional[str] = None  # Specific town extraction
-    county: Optional[str] = None  # County extraction
-    expected_salary: Optional[str] = None  # More specific salary field
-    
-    def to_cv_data(self) -> CVData:
-        
-        cv_data = CVData()
-        
-        # Basic mapping
-        cv_data.cv_id = self.cv_id
-        cv_data.url = self.profile_url or self.cv_preview_url
-        cv_data.search_keywords = self.search_keywords.copy()
-        cv_data.search_location = self.search_location
-        
-        # Candidate information
-        cv_data.candidate.candidate_id = self.cv_id
-        cv_data.candidate.name = self.name
-        cv_data.candidate.title = self.current_job_title or self.title
-        cv_data.candidate.location = self.location
-        cv_data.candidate.salary_expectation = self.salary or self.expected_salary
-        cv_data.candidate.summary = self.summary
-        cv_data.candidate.availability = self.availability or self.date_available
-        cv_data.candidate.last_active = self.last_active
-        cv_data.candidate.skills = (self.main_skills + self.skills)  # Combine both skill lists
-        
-        return cv_data
-
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert search result to dictionary with all enhanced fields."""
-        return {
-            # Basic Information
-            'cv_id': self.cv_id,
-            'title': self.title,
-            'name': self.name,
-            'location': self.location,
-            'salary': self.salary,
-            'summary': self.summary,
-            
-            # Enhanced Job Details
-            'current_job_title': self.current_job_title,
-            'desired_job_title': self.desired_job_title,
-            'job_type': self.job_type,
-            'date_available': self.date_available,
-            'willing_to_travel': self.willing_to_travel,
-            'willing_to_relocate': self.willing_to_relocate,
-            'uk_driving_licence': self.uk_driving_licence,
-            
-            # Profile Metadata
-            'profile_match_percentage': self.profile_match_percentage,
-            'profile_cv_last_updated': self.profile_cv_last_updated,
-            'last_viewed_date': self.last_viewed_date,
-            'quickview_ref': self.quickview_ref,
-            
-            # Enhanced Skills
-            'main_skills': self.main_skills,
-            'chosen_industries': self.chosen_industries,
-            'cv_keywords': self.cv_keywords,
-            'fluent_languages': self.fluent_languages,
-            
-            # URLs
-            'profile_url': self.profile_url,
-            'cv_preview_url': self.cv_preview_url,
-            'download_url': self.download_url,
-            
-            # Legacy fields
-            'last_active': self.last_active,
-            'experience_level': self.experience_level,
-            'availability': self.availability,
-            'search_rank': self.search_rank,
-            'search_score': self.search_score,
-            'search_keywords': self.search_keywords,
-            'search_location': self.search_location,
-            'skills': self.skills,
-            'qualifications': self.qualifications,
-            'industry': self.industry,
-            'processed': self.processed,
-            'selected_for_download': self.selected_for_download,
-            
-            # Additional fields
-            'town': self.town,
-            'county': self.county,
-            'expected_salary': self.expected_salary
-        }
+        """Convert to dictionary, only including the 7 essential fields for clean output."""
+        # Only include the 7 essential fields that we actually extract from search cards
+        clean_data = {}
+        
+        # Always include these core identifiers
+        clean_data['cv_id'] = self.cv_id
+        clean_data['name'] = self.name
+        clean_data['search_rank'] = self.search_rank
+        
+        # Only include optional essential fields if they have meaningful values
+        if self.profile_url:
+            clean_data['profile_url'] = self.profile_url
+        if self.profile_match_percentage:
+            clean_data['profile_match_percentage'] = self.profile_match_percentage
+        if self.profile_cv_last_updated:
+            clean_data['profile_cv_last_updated'] = self.profile_cv_last_updated
+        if self.last_viewed_date:
+            clean_data['last_viewed_date'] = self.last_viewed_date
+        
+        # Include search context if available
+        if self.search_keywords:
+            clean_data['search_keywords'] = self.search_keywords
+        
+        return clean_data
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'SearchResult':
