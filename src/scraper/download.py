@@ -536,6 +536,7 @@ class DownloadManager:
                 'cv_keywords': None,
                 'profile_last_updated': None,
                 'date_registered': None,
+                'last_active': None,  # Add missing last_active field
                 'last_viewed_date': None,
                 'quickview_ref': None,
                 'profile_match_percentage': None,

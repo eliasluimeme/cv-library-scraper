@@ -1,0 +1,56 @@
+{
+  "search_result": {
+    "cv_id": "26805101",
+    "name": "Endi Sefa",
+    "search_rank": 5,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/26805101?distance=10&enc_hl=24%3A75SxIjsG8LJjPfj6TboTYWfgTX9r3L04%3Avo5EmgHi05Xx8fV6pMqYOuQ7_8NZH5-Fe4BjrxBOezc&enc_keywords=24%3A2xe3EivvV8cGy5ZaD2WlO_64ne4u8DnQ%3A88r4Gm-BoPq0nh3dAe_YEaurI1zlt2LVryrXcgCiDkl9bA&location=&sid=ed0ebe20-88bd-4dd9-a016-4d5d99ac1543&stem_phrases=",
+    "profile_match_percentage": "99% Match",
+    "profile_cv_last_updated": "30/06/2025 11:33",
+    "last_viewed_date": "05/08/2025 (19:07)",
+    "search_keywords": [
+      "python",
+      "developer"
+    ]
+  },
+  "candidate_info": {
+    "name": "Endi Sefa",
+    "quickview_ref": "26805101",
+    "date_registered": "16/01/2024",
+    "profile_last_updated": "30/06/2025 (11:33)",
+    "last_active": "30/06/2025 (11:41)",
+    "personal_job_details": {
+      "town": "Hounslow",
+      "county": "Greater London",
+      "location": "Hounslow, Greater London",
+      "main_phone": "07448802073",
+      "optional_phone": null,
+      "email": "endisefa@gmail.com",
+      "current_job_title": "Python Developer",
+      "desired_job_title": "Python Developer",
+      "job_type": "Permanent",
+      "willing_to_travel": "Anywhere",
+      "willing_to_relocate": "Yes",
+      "uk_driving_licence": "No",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£25,001 - £30,000"
+    },
+    "candidates_chosen_industries": [
+      "IT/Internet/Technical",
+      "Graduate"
+    ],
+    "candidates_main_skills": [
+      "Best Practice",
+      "Mentoring",
+      "effective code management",
+      "Analytics",
+      "Dashboards",
+      "Excellent problem-solving skills",
+      "Eye for Detail",
+      "Moodle",
+      "Problem Solving",
+      "Sofware Development",
+      "Teamwork"
+    ]
+  }
+}

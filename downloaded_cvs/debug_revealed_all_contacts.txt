@@ -12,14 +12,14 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Aryas Karimi
-Quickview Ref# 29489739
-Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (14:28)   Last Active: 01/08/2025 (14:28)
+Endi Sefa
+Quickview Ref# 26805101
+Date Registered: 16/01/2024   Profile/CV Last Updated: 30/06/2025 (11:33)   Last Active: 30/06/2025 (11:41)
 Personal & Job Details
 Town
-Birmingham
+Hounslow
 County
-West Midlands
+Greater London
 Main Phone
 View contact details
 Optional Phone
@@ -27,9 +27,9 @@ View contact details
 Email
 View contact details
 Fluent Languages
-N/A
+Albanian
 Date Available
-N/A
+Immediately
 Current Job Title
 Python Developer
 Desired Job Title
@@ -37,31 +37,28 @@ Python Developer
 Job Type
 Permanent
 Willing to Travel
-Up to 10 miles
+Anywhere
 Willing to Relocate
-No
-UK Driving Licence
 Yes
+UK Driving Licence
+No
 Expected Salary
-£30,001 - £40,000
+£25,001 - £30,000
 Candidates Chosen Industries
 IT/Internet/Technical
+Graduate
 Candidates Main Skills
-Analytics
-Mentoring
 Best Practice
-Back End
-REST API
-FastAPI
-eCommerce
-pandas
-CI/CD
-Docker
-Git
-Machine Learning
-NumPy
-Stream Processing
-Python Programming
+Mentoring
+effective code management
+Analytics
+Dashboards
+Excellent problem-solving skills
+Eye for Detail
+Moodle
+Problem Solving
+Sofware Development
+Teamwork
 Recruiter Options
 Download CV
 Video Interview
@@ -77,36 +74,6 @@ Document
 Plain Text
 Notes
 The contact details in the CV below have been hidden View contact details
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -208,23 +175,23 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Aryas Karimi
-Quickview Ref# 29489739
-Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (14:28)   Last Active: 01/08/2025 (14:28)
+Endi Sefa
+Quickview Ref# 26805101
+Date Registered: 16/01/2024   Profile/CV Last Updated: 30/06/2025 (11:33)   Last Active: 30/06/2025 (11:41)
 Personal & Job Details
 Town
-Birmingham
+Hounslow
 County
-West Midlands
+Greater London
 Main Phone
-+447355656554
+07448802073
 Optional Phone
 Email
-aryaskarimi34@gmail.com
+endisefa@gmail.com
 Fluent Languages
-N/A
+Albanian
 Date Available
-N/A
+Immediately
 Current Job Title
 Python Developer
 Desired Job Title
@@ -232,31 +199,28 @@ Python Developer
 Job Type
 Permanent
 Willing to Travel
-Up to 10 miles
+Anywhere
 Willing to Relocate
-No
-UK Driving Licence
 Yes
+UK Driving Licence
+No
 Expected Salary
-£30,001 - £40,000
+£25,001 - £30,000
 Candidates Chosen Industries
 IT/Internet/Technical
+Graduate
 Candidates Main Skills
-Analytics
-Mentoring
 Best Practice
-Back End
-REST API
-FastAPI
-eCommerce
-pandas
-CI/CD
-Docker
-Git
-Machine Learning
-NumPy
-Stream Processing
-Python Programming
+Mentoring
+effective code management
+Analytics
+Dashboards
+Excellent problem-solving skills
+Eye for Detail
+Moodle
+Problem Solving
+Sofware Development
+Teamwork
 Recruiter Options
 Download CV
 Video Interview
@@ -272,36 +236,6 @@ Report this CV
 Document
 Plain Text
 Notes
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

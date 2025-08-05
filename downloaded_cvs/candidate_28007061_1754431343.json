@@ -1,0 +1,59 @@
+{
+  "search_result": {
+    "cv_id": "28007061",
+    "name": "Abhishaik Reddy Pammi",
+    "search_rank": 2,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/28007061?distance=10&enc_hl=24%3AZGAjC_bA_6DGU1u4QPmdoW_Jl7lcMQeP%3Ab85wcbrvXK3TlnmWgNUvABZhmK_OdVnUiA544ZlJLsM&enc_keywords=24%3A2xe3EivvV8cGy5ZaD2WlO_64ne4u8DnQ%3A88r4Gm-BoPq0nh3dAe_YEaurI1zlt2LVryrXcgCiDkl9bA&location=&sid=ed0ebe20-88bd-4dd9-a016-4d5d99ac1543&stem_phrases=",
+    "profile_match_percentage": "100% Match",
+    "profile_cv_last_updated": "12/06/2025 11:47",
+    "last_viewed_date": "05/08/2025 (19:28)",
+    "search_keywords": [
+      "python",
+      "developer"
+    ]
+  },
+  "candidate_info": {
+    "name": "Abhishaik Reddy Pammi",
+    "quickview_ref": "28007061",
+    "date_registered": "20/09/2024",
+    "profile_last_updated": "12/06/2025 (11:47)",
+    "last_active": "12/06/2025 (11:51)",
+    "personal_job_details": {
+      "town": "Leicester",
+      "county": "Leicestershire",
+      "location": "Leicester, Leicestershire",
+      "main_phone": "07979453948",
+      "optional_phone": null,
+      "email": "abhishaikreddy07@gmail.com",
+      "current_job_title": "Python Developer",
+      "desired_job_title": "Python Developer",
+      "job_type": "Contract, Permanent",
+      "willing_to_travel": "Up to 50 miles",
+      "willing_to_relocate": "Yes",
+      "uk_driving_licence": "No",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£30,001 - £40,000"
+    },
+    "candidates_chosen_industries": [
+      "Engineering",
+      "IT/Internet/Technical"
+    ],
+    "candidates_main_skills": [
+      "Python",
+      "django",
+      "React",
+      "Sql",
+      "Html",
+      "css",
+      "aws",
+      "User Experience",
+      "Best Practice",
+      "Requirements Gathering",
+      "efficient data management",
+      "managed CI",
+      "Managed the migration",
+      "Excellent problem-so"
+    ]
+  }
+}

@@ -24,4 +24,8 @@ pytest==7.4.3
 pytest-mock==3.12.0
 
 # WebDriver management
-webdriver-manager==4.0.1 
+webdriver-manager==4.0.1
+
+# Performance optimization dependencies
+psutil>=5.9.0         # Memory monitoring and system resource tracking
+typing-extensions>=4.0.0  # Enhanced type hints for optimization components 
