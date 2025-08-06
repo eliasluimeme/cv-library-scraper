@@ -11,14 +11,14 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Endi Sefa
-Quickview Ref# 26805101
-Date Registered: 16/01/2024   Profile/CV Last Updated: 30/06/2025 (11:33)   Last Active: 30/06/2025 (11:41)
+Pradeep K
+Quickview Ref# 29489465
+Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (13:19)   Last Active: 01/08/2025 (13:19)
 Personal & Job Details
 Town
-Hounslow
+Thornaby-on-Tees
 County
-Greater London
+North Yorkshire
 Main Phone
 View contact details
 Optional Phone
@@ -26,13 +26,13 @@ View contact details
 Email
 View contact details
 Fluent Languages
-Albanian
+N/A
 Date Available
-Immediately
+1 month
 Current Job Title
 Python Developer
 Desired Job Title
-Python Developer
+N/A
 Job Type
 Permanent
 Willing to Travel
@@ -40,24 +40,25 @@ Anywhere
 Willing to Relocate
 Yes
 UK Driving Licence
-No
+Yes
 Expected Salary
-£25,001 - £30,000
+£40,001 - £60,000
 Candidates Chosen Industries
 IT/Internet/Technical
-Graduate
 Candidates Main Skills
+Dashboards
 Best Practice
 Mentoring
-effective code management
+Troubleshooting
+Business Analytics
 Analytics
-Dashboards
-Excellent problem-solving skills
-Eye for Detail
-Moodle
-Problem Solving
-Sofware Development
-Teamwork
+Big Data technologies
+Communication Skills
+Exports
+Scheduling
+Stand-ups
+Python Programming
+ETL
 Recruiter Options
 Download CV
 Video Interview
@@ -73,6 +74,231 @@ Document
 Plain Text
 Notes
 The contact details in the CV below have been hidden View contact details
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

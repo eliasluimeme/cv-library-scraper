@@ -86,7 +86,21 @@ class CVLibraryScraper:
             return False
     
     def search(self, keywords: List[str], location: Optional[str] = None, 
-              salary_min: Optional[int] = None, salary_max: Optional[int] = None,
+              salary_min: Optional[str] = None, salary_max: Optional[str] = None,
+              # Job and industry filters
+              job_type: Optional[List[str]] = None, industry: Optional[List[str]] = None,
+              # Location and timing filters
+              distance: Optional[int] = None, time_period: Optional[str] = None,
+              # Boolean filters
+              willing_to_relocate: Optional[bool] = None, uk_driving_licence: Optional[bool] = None,
+              hide_recently_viewed: Optional[bool] = None,
+              # Advanced filters
+              languages: Optional[List[str]] = None, minimum_match: Optional[str] = None,
+              sort_order: Optional[str] = None,
+              # Advanced keyword filters
+              must_have_keywords: Optional[str] = None, any_keywords: Optional[str] = None,
+              none_keywords: Optional[str] = None,
+              # Original parameters
               max_pages: int = 5, target_results: Optional[int] = None) -> SearchResultCollection:
         """
         Search for CVs matching the specified criteria.
@@ -120,8 +134,31 @@ class CVLibraryScraper:
             
             self.logger.info(f"Starting CV search for keywords: {keywords}")
             
-            # Perform the search
-            if self.search_manager.search_cvs(keywords, location, salary_min, salary_max):
+            # Perform the search with comprehensive filters
+            if self.search_manager.search_cvs(
+                keywords=keywords, 
+                location=location, 
+                salary_min=salary_min, 
+                salary_max=salary_max,
+                # Job and industry filters
+                job_type=job_type,
+                industry=industry,
+                # Location and timing filters
+                distance=distance,
+                time_period=time_period,
+                # Boolean filters
+                willing_to_relocate=willing_to_relocate,
+                uk_driving_licence=uk_driving_licence,
+                hide_recently_viewed=hide_recently_viewed,
+                # Advanced filters
+                languages=languages,
+                minimum_match=minimum_match,
+                sort_order=sort_order,
+                # Advanced keyword filters
+                must_have_keywords=must_have_keywords,
+                any_keywords=any_keywords,
+                none_keywords=none_keywords
+            ):
                 self.logger.info("Search form submitted successfully")
                 
                 # Parse results from current page first

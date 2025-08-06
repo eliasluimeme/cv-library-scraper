@@ -60,22 +60,7 @@ class ProductionCVScraper:
         
     def run_production_session(self, keywords: List[str], 
                              location: Optional[str] = None,
-                             max_downloads: int = 50,
-                             # Salary filters
-                             salary_min: Optional[str] = None, salary_max: Optional[str] = None,
-                             # Job and industry filters
-                             job_type: Optional[List[str]] = None, industry: Optional[List[str]] = None,
-                             # Location and timing filters
-                             distance: Optional[int] = None, time_period: Optional[str] = None,
-                             # Boolean filters
-                             willing_to_relocate: Optional[bool] = None, uk_driving_licence: Optional[bool] = None,
-                             hide_recently_viewed: Optional[bool] = None,
-                             # Advanced filters
-                             languages: Optional[List[str]] = None, minimum_match: Optional[str] = None,
-                             sort_order: Optional[str] = None,
-                             # Advanced keyword filters
-                             must_have_keywords: Optional[str] = None, any_keywords: Optional[str] = None,
-                             none_keywords: Optional[str] = None) -> dict:
+                             max_downloads: int = 50) -> dict:
         """
         Run a production scraping session with sequential processing.
         
@@ -104,12 +89,7 @@ class ProductionCVScraper:
             PERFORMANCE_MONITOR.start_operation()
             
             self.logger.info("\n🔐 Phase 1: Authentication & Search")
-            search_results = self._perform_search(keywords, location, max_downloads, 
-                                                 salary_min, salary_max, job_type, industry, 
-                                                 distance, time_period, willing_to_relocate, 
-                                                 uk_driving_licence, hide_recently_viewed, 
-                                                 languages, minimum_match, sort_order, 
-                                                 must_have_keywords, any_keywords, none_keywords)
+            search_results = self._perform_search(keywords, location, max_downloads)
             
             if not search_results or not search_results.results:
                 self.logger.error("❌ No search results found")
@@ -140,16 +120,7 @@ class ProductionCVScraper:
             self._cleanup_session()
             
     def _perform_search(self, keywords: List[str], location: Optional[str], 
-                       max_downloads: int,
-                       salary_min: Optional[str] = None, salary_max: Optional[str] = None,
-                       job_type: Optional[List[str]] = None, industry: Optional[List[str]] = None,
-                       distance: Optional[int] = None, time_period: Optional[str] = None,
-                       willing_to_relocate: Optional[bool] = None, uk_driving_licence: Optional[bool] = None,
-                       hide_recently_viewed: Optional[bool] = None,
-                       languages: Optional[List[str]] = None, minimum_match: Optional[str] = None,
-                       sort_order: Optional[str] = None,
-                       must_have_keywords: Optional[str] = None, any_keywords: Optional[str] = None,
-                       none_keywords: Optional[str] = None):
+                       max_downloads: int):
         """Perform search with production optimizations."""
         try:
             # Authenticate first
@@ -158,34 +129,8 @@ class ProductionCVScraper:
                 raise Exception("Authentication failed")
             self.logger.info("✅ Authentication successful")
             
-            # Use the existing scraper's search functionality with comprehensive filters
-            search_results = self.scraper.search(
-                keywords=keywords, 
-                location=location,
-                # Salary filters
-                salary_min=salary_min,
-                salary_max=salary_max,
-                # Job and industry filters
-                job_type=job_type,
-                industry=industry,
-                # Location and timing filters
-                distance=distance,
-                time_period=time_period,
-                # Boolean filters
-                willing_to_relocate=willing_to_relocate,
-                uk_driving_licence=uk_driving_licence,
-                hide_recently_viewed=hide_recently_viewed,
-                # Advanced filters
-                languages=languages,
-                minimum_match=minimum_match,
-                sort_order=sort_order,
-                # Advanced keyword filters
-                must_have_keywords=must_have_keywords,
-                any_keywords=any_keywords,
-                none_keywords=none_keywords,
-                # Target results
-                target_results=max_downloads
-            )
+            # Use the existing scraper's search functionality
+            search_results = self.scraper.search(keywords, location, target_results=max_downloads)
             
             self.logger.info(f"✅ Search completed: {len(search_results.results)} candidates found")
             return search_results
@@ -281,71 +226,22 @@ def main():
     """Main entry point for production runner."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="Production CV-Library Scraper with Comprehensive Filters")
+    parser = argparse.ArgumentParser(description="Production CV-Library Scraper")
     parser.add_argument("--keywords", nargs="+", required=True, help="Search keywords")
-    parser.add_argument("--location", type=str, help="Location filter (e.g., 'Manchester', 'London')")
+    parser.add_argument("--location", type=str, help="Location filter")
     parser.add_argument("--max-downloads", type=int, default=50, help="Maximum downloads")
     parser.add_argument("--config", type=str, default="config/config.yaml", help="Config file path")
-
-    # Salary filters
-    parser.add_argument("--salary-min", type=str, help="Minimum salary filter (e.g., '30000')")
-    parser.add_argument("--salary-max", type=str, help="Maximum salary filter (e.g., '50000')")
-
-    # Job and industry filters
-    parser.add_argument("--job-type", nargs="+", help="Job types (e.g., 'Permanent' 'Contract')")
-    parser.add_argument("--industry", nargs="+", help="Industries (e.g., 'IT/Internet/Technical')")
-
-    # Location and timing filters
-    parser.add_argument("--distance", type=int, help="Distance in miles from location (e.g., 10, 25, 50)")
-    parser.add_argument("--time-period", type=str, help="CV submission period in days (e.g., '1', '7', '30')")
-
-    # Boolean filters
-    parser.add_argument("--relocate", action="store_true", help="Only candidates willing to relocate")
-    parser.add_argument("--driving-licence", action="store_true", help="Only candidates with UK driving licence")
-    parser.add_argument("--hide-viewed", action="store_true", help="Hide recently viewed candidates")
-
-    # Advanced filters
-    parser.add_argument("--languages", nargs="+", help="Additional languages (e.g., 'French' 'German')")
-    parser.add_argument("--min-match", type=str, help="Minimum match percentage (e.g., '60', '80')")
-    parser.add_argument("--sort", type=str, choices=["relevancy desc", "updated desc", "distance asc"], 
-                       default="relevancy desc", help="Sort order")
-
-    # Advanced keyword filters
-    parser.add_argument("--must-have", type=str, help="Keywords that must appear")
-    parser.add_argument("--any-keywords", type=str, help="Any of these keywords")
-    parser.add_argument("--none-keywords", type=str, help="Keywords that must not appear")
-
+    
     args = parser.parse_args()
     
     # Initialize production scraper
     production_scraper = ProductionCVScraper(args.config)
     
-    # Run production session with comprehensive filters
+    # Run production session (always sequential)
     results = production_scraper.run_production_session(
         keywords=args.keywords,
         location=args.location,
-        max_downloads=args.max_downloads,
-        # Salary filters
-        salary_min=args.salary_min,
-        salary_max=args.salary_max,
-        # Job and industry filters
-        job_type=args.job_type,
-        industry=args.industry,
-        # Location and timing filters
-        distance=args.distance,
-        time_period=args.time_period,
-        # Boolean filters
-        willing_to_relocate=args.relocate,
-        uk_driving_licence=args.driving_licence,
-        hide_recently_viewed=args.hide_viewed,
-        # Advanced filters
-        languages=args.languages,
-        minimum_match=args.min_match,
-        sort_order=args.sort,
-        # Advanced keyword filters
-        must_have_keywords=args.must_have,
-        any_keywords=args.any_keywords,
-        none_keywords=args.none_keywords
+        max_downloads=args.max_downloads
     )
     
     # Output results

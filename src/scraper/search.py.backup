@@ -33,9 +33,9 @@ class SearchManager:
     
     # Search form selectors (updated for actual CV-Library interface)
     KEYWORDS_SELECTOR = "input[name='keywords'], #keywords, .keywords-input, input[placeholder*='keyword']"
-    LOCATION_SELECTOR = ".form-combobox__control"  # Target the visible location combobox by class
-    SALARY_MIN_SELECTOR = "#salary-from"  # Target the visible salary dropdown
-    SALARY_MAX_SELECTOR = "#salary-to"    # Target the visible salary dropdown
+    LOCATION_SELECTOR = "input[data-combobox-control], .form-combobox__control, input[name='location'], #location, #search-builder__location, .location-input, input[placeholder*='location']"
+    SALARY_MIN_SELECTOR = "select[name='salary_min'], #salary_min, .salary-from"
+    SALARY_MAX_SELECTOR = "select[name='salary_max'], #salary_max, .salary-to"
     JOB_TYPE_SELECTOR = "select[name='job_type'], #job_type, .job-type"
     INDUSTRY_SELECTOR = "select[name='industry'], #industry, .industry"
     MINIMUM_MATCH_SELECTOR = "select[name='minimum_match'], #minimum_match, .minimum-match"
@@ -612,20 +612,7 @@ class SearchManager:
             return False
     
     def search_cvs(self, keywords: List[str], location: Optional[str] = None,
-                  salary_min: Optional[str] = None, salary_max: Optional[str] = None,
-                  # Job and industry filters
-                  job_type: Optional[List[str]] = None, industry: Optional[List[str]] = None,
-                  # Location and timing filters
-                  distance: Optional[int] = None, time_period: Optional[str] = None,
-                  # Boolean filters
-                  willing_to_relocate: Optional[bool] = None, uk_driving_licence: Optional[bool] = None,
-                  hide_recently_viewed: Optional[bool] = None,
-                  # Advanced filters
-                  languages: Optional[List[str]] = None, minimum_match: Optional[str] = None,
-                  sort_order: Optional[str] = None,
-                  # Advanced keyword filters
-                  must_have_keywords: Optional[str] = None, any_keywords: Optional[str] = None,
-                  none_keywords: Optional[str] = None) -> bool:
+                  salary_min: Optional[int] = None, salary_max: Optional[int] = None) -> bool:
         """
         Perform optimized CV search with minimal steps.
         
@@ -634,19 +621,6 @@ class SearchManager:
             location: Location to search in (optional)
             salary_min: Minimum salary (optional)
             salary_max: Maximum salary (optional)
-            job_type: List of job types to filter by (optional)
-            industry: List of industries to filter by (optional)
-            distance: Maximum distance from the location (optional)
-            time_period: Time period to filter by (optional)
-            willing_to_relocate: Whether to filter candidates willing to relocate (optional)
-            uk_driving_licence: Whether to filter candidates with UK driving licence (optional)
-            hide_recently_viewed: Whether to hide recently viewed candidates (optional)
-            languages: List of languages to filter by (optional)
-            minimum_match: Minimum match percentage for advanced filters (optional)
-            sort_order: Sort order for search results (optional)
-            must_have_keywords: Keywords that must be present in the search (optional)
-            any_keywords: Keywords that can be present in the search (optional)
-            none_keywords: Keywords that must not be present in the search (optional)
             
         Returns:
             True if search was successful, False otherwise
@@ -663,32 +637,9 @@ class SearchManager:
             self.driver.get(self.SEARCH_URL)
             time.sleep(1)  # Reduced wait time
             
-            # STEP 2: Fill search form with comprehensive filters
+            # STEP 2: Fill search form (streamlined)
             self.logger.info("Step 2: Filling search form")
-            if not self._fill_search_form_streamlined(
-                keywords=keywords, 
-                location=location, 
-                salary_min=salary_min, 
-                salary_max=salary_max,
-                # Job and industry filters
-                job_type=job_type,
-                industry=industry,
-                # Location and timing filters
-                distance=distance,
-                time_period=time_period,
-                # Boolean filters
-                willing_to_relocate=willing_to_relocate,
-                uk_driving_licence=uk_driving_licence,
-                hide_recently_viewed=hide_recently_viewed,
-                # Advanced filters
-                languages=languages,
-                minimum_match=minimum_match,
-                sort_order=sort_order,
-                # Advanced keyword filters
-                must_have_keywords=must_have_keywords,
-                any_keywords=any_keywords,
-                none_keywords=none_keywords
-            ):
+            if not self._fill_search_form_streamlined(keywords, location, salary_min, salary_max):
                 return False
             
             # STEP 3: Submit search (streamlined)
@@ -704,238 +655,185 @@ class SearchManager:
             return False
     
     def _fill_search_form_streamlined(self, keywords: List[str], location: Optional[str] = None,
-                                    salary_min: Optional[int] = None, salary_max: Optional[int] = None,
-                                    # Job and industry filters
-                                    job_type: Optional[List[str]] = None, industry: Optional[List[str]] = None,
-                                    # Location and timing filters
-                                    distance: Optional[int] = None, time_period: Optional[str] = None,
-                                    # Boolean filters
-                                    willing_to_relocate: Optional[bool] = None, uk_driving_licence: Optional[bool] = None,
-                                    hide_recently_viewed: Optional[bool] = None,
-                                    # Advanced filters
-                                    languages: Optional[List[str]] = None, minimum_match: Optional[str] = None,
-                                    sort_order: Optional[str] = None,
-                                    # Advanced keyword filters
-                                    must_have_keywords: Optional[str] = None, any_keywords: Optional[str] = None,
-                                    none_keywords: Optional[str] = None) -> bool:
-        """PERFORMANCE OPTIMIZED: Ultra-fast form filling with parallel execution."""
-        import time
-        
+                                    salary_min: Optional[int] = None, salary_max: Optional[int] = None) -> bool:
+        """
+        Fill search form using known working selectors with minimal waits.
+        """
         try:
-            self.logger.info("🔧 Step 1: Basic keywords (immediate)...")
+            # Keywords field - this is the main search field
+            keywords_text = " ".join(keywords) if isinstance(keywords, list) else str(keywords)
             
-            # PERFORMANCE: Keywords first (most critical field)
-            keywords_filled = False
-            keyword_selectors = [
-                "input.boolean__input",          # Current working selector
-                "input[name='keywords']",
+            # Find keywords field quickly
+            keywords_field = None
+            
+            # Try direct selectors without waiting
+            for selector in [
+                "input.boolean__input",  # The actual visible input field
+                "input[name='keywords']", 
                 "#keywords", 
-                ".keywords-input",
-                "input[placeholder*='keyword']"
-            ]
-            
-            for selector in keyword_selectors:
+                "textarea[name='keywords']"
+            ]:
                 try:
-                    keyword_input = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    if keyword_input.is_displayed():
-                        # Fast clear and fill
-                        self.driver.execute_script("arguments[0].value = '';", keyword_input)
-                        keyword_input.send_keys(" ".join(keywords))
-                        self.logger.info(f"✅ Entered keywords: {' '.join(keywords)}")
-                        keywords_filled = True
+                    element = self.driver.find_element(By.CSS_SELECTOR, selector)
+                    if element.is_displayed() and element.is_enabled():
+                        keywords_field = element
+                        self.logger.info(f"✅ Found keywords field: {selector}")
                         break
-                except:
+                except Exception:
                     continue
             
-            if not keywords_filled:
-                self.logger.warning("⚠️ Could not fill keywords")
+            # Fallback: look for any large text input
+            if not keywords_field:
+                text_inputs = self.driver.find_elements(By.CSS_SELECTOR, "input[type='text'], textarea")
+                for inp in text_inputs:
+                    try:
+                        if (inp.is_displayed() and inp.is_enabled() and 
+                            not inp.get_attribute("readonly") and
+                            inp.size['width'] > 200):
+                            keywords_field = inp
+                            self.logger.info("✅ Found keywords field using fallback")
+                            break
+                    except Exception:
+                        continue
+            
+            if not keywords_field:
+                self.logger.error("❌ Could not find keywords field")
                 return False
             
-            # PERFORMANCE: Check if we need advanced options BEFORE expanding
-            needs_advanced = any([
-                job_type, industry, distance, time_period, willing_to_relocate, 
-                uk_driving_licence, hide_recently_viewed, languages, minimum_match,
-                sort_order, must_have_keywords, any_keywords, none_keywords,
-                salary_min, salary_max, location
-            ])
+            # Fill keywords with minimal interaction
+            try:
+                keywords_field.click()
+                keywords_field.clear()
+                keywords_field.send_keys(keywords_text)
+                self.logger.info(f"✅ Entered keywords: {keywords_text}")
+            except Exception as e:
+                self.logger.error(f"❌ Failed to fill keywords: {e}")
+                return False
             
-            if needs_advanced:
-                self.logger.info("🔍 Expanding advanced options (fast)...")
-                if not self._click_more_search_options():
-                    self.logger.warning("⚠️ Could not expand advanced options")
-                    return False
+            # Skip location field search if not provided (saves time)
+            if location:
+                location_field = None
+                # Updated selectors to handle CV-Library's combobox location field
+                location_selectors = [
+                    "input[data-combobox-control]",  # The visible combobox input field
+                    ".form-combobox__control",       # Alternative combobox selector
+                    "input[name='location']",        # Hidden field (as fallback)
+                    "#location",                     # Direct ID selector (hidden)
+                    "#search-builder__location"      # Alternative ID from search builder
+                ]
                 
-                # PERFORMANCE: Reduced wait time from 4s to 1.5s
-                time.sleep(1.5)
-                self.logger.info("⏳ Advanced form ready")
+                for selector in location_selectors:
+                    try:
+                        elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
+                        for element in elements:
+                            # For combobox control, we want the visible one
+                            if "combobox" in selector and element.is_displayed():
+                                location_field = element
+                                self.logger.debug(f"✅ Found visible location combobox with selector: {selector}")
+                                break
+                            # For regular inputs, check if they're enabled (may be hidden)
+                            elif "combobox" not in selector and element.is_enabled():
+                                location_field = element
+                                self.logger.debug(f"✅ Found location field with selector: {selector}")
+                                break
+                        if location_field:
+                            break
+                    except Exception:
+                        continue
                 
-                # PERFORMANCE: Fill all fields in optimized batches (parallel where possible)
-                self.logger.info("🚀 TURBO MODE: Filling all fields rapidly...")
-                
-                # Batch 1: Location & Distance (can be done together)
-                if location or distance:
-                    self._fill_location_and_distance_fast(location, distance)
-                
-                # Batch 2: Salary Range (single operation)
-                if salary_min or salary_max:
-                    self._fill_salary_range_fast(salary_min, salary_max)
-                
-                # Batch 3: Job & Industry (JavaScript execution - fastest)
-                if job_type or industry:
-                    self._fill_job_and_industry_fast(job_type, industry)
-                
-                # Batch 4: Time & Match (simple selects)
-                if time_period or minimum_match:
-                    self._fill_time_and_match_fast(time_period, minimum_match)
-                
-                # Batch 5: Checkboxes (can be done in parallel)
-                if willing_to_relocate is not None or uk_driving_licence is not None or hide_recently_viewed is not None:
-                    self._fill_checkboxes_fast(willing_to_relocate, uk_driving_licence, hide_recently_viewed)
-                
-                # Batch 6: Advanced Keywords (hidden fields - fast JavaScript)
-                if must_have_keywords or any_keywords or none_keywords:
-                    self._fill_advanced_keywords_fast(must_have_keywords, any_keywords, none_keywords)
-                
-                # Batch 7: Languages & Sort (complex but optimized)
-                if languages or sort_order:
-                    self._fill_languages_and_sort_fast(languages, sort_order)
-                
-                # PERFORMANCE: Minimal validation wait (reduced from 2s to 0.3s)
-                time.sleep(0.3)
-                self.logger.info("✅ Turbo form filling completed")
-            else:
-                self.logger.info("✅ Basic search ready (no advanced options needed)")
-            
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"❌ Form filling failed: {e}")
-            return False
-
-    def _submit_search_streamlined(self) -> bool:
-        """PERFORMANCE OPTIMIZED: Ultra-fast search submission."""
-        try:
-            self.logger.info("🚀 Turbo search submission...")
-            
-            # PERFORMANCE: Reduced stabilization from 1s to 0.2s
-            time.sleep(0.2)
-            
-            search_submitted = False
-            
-            # PERFORMANCE: Optimized button detection (most likely first)
-            button_selectors = [
-                "input[type='submit'][value='View results']",  # After advanced options
-                "input[type='submit'][value='Find CV']",       # Basic search
-                "button[type='submit']:contains('View')",      # Generic View button
-                "button[type='submit']:contains('Find')",      # Generic Find button
-                "input[type='submit']",                        # Any submit button
-                "button[type='submit']"                        # Any submit button
-            ]
-            
-            for i, selector in enumerate(button_selectors):
-                try:
-                    if ":contains(" in selector:
-                        # XPath approach for text-based selectors
-                        xpath_selector = f"//button[@type='submit'][contains(text(), '{selector.split(':contains(')[1][:-2]}')]"
-                        search_button = self.driver.find_element(By.XPATH, xpath_selector)
-                    else:
-                        search_button = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    
-                    if search_button.is_displayed() and search_button.is_enabled():
-                        # PERFORMANCE: Direct click without extra checks
-                        search_button.click()
-                        button_name = "Advanced view results" if i == 0 else f"Button {i+1}"
-                        self.logger.info(f"🎯 Search launched: {button_name}")
-                        search_submitted = True
-                        break
+                if location_field:
+                    try:
+                        # For visible combobox, interact directly
+                        if location_field.is_displayed():
+                            location_field.click()
+                            location_field.clear()
+                            location_field.send_keys(location)
+                            
+                            # Trigger input events for combobox
+                            self.driver.execute_script("arguments[0].dispatchEvent(new Event('input', {bubbles: true}));", location_field)
+                            self.driver.execute_script("arguments[0].dispatchEvent(new Event('change', {bubbles: true}));", location_field)
+                            
+                            self.logger.info(f"✅ Entered location: {location}")
+                            
+                            # Brief wait for autocomplete
+                            import time
+                            time.sleep(0.5)
+                        else:
+                            # For hidden fields, try direct value setting
+                            self.driver.execute_script("arguments[0].value = arguments[1];", location_field, location)
+                            self.driver.execute_script("arguments[0].dispatchEvent(new Event('change', {bubbles: true}));", location_field)
+                            self.logger.info(f"✅ Set location value: {location}")
                         
-                except Exception as e:
-                    self.logger.debug(f"Button selector {i+1} failed: {e}")
-                    continue
+                    except Exception as e:
+                        self.logger.warning(f"⚠️ Could not fill location field: {e}")
+                    else:
+                        self.logger.warning("⚠️ Location field not found - location filter will not be applied")
             
-            if not search_submitted:
-                # PERFORMANCE: Fast JavaScript fallback
-                try:
-                    self.driver.execute_script("document.querySelector('input[type=submit], button[type=submit]').click();")
-                    self.logger.info("✅ Search launched (JS fallback)")
-                    search_submitted = True
-                except:
-                    pass
+            # Store search parameters
+            self.current_search_params = {
+                'keywords': keywords,
+                'location': location,
+                'salary_min': salary_min,
+                'salary_max': salary_max
+            }
             
-            if search_submitted:
-                # PERFORMANCE: Reduced navigation wait from 8s to 4s
-                WebDriverWait(self.driver, 4).until(
-                    lambda driver: "candidate-search" in driver.current_url or "results" in driver.current_url
-                )
-                self.logger.info(f"✅ Search completed: {self.driver.current_url}")
-                return True
-            else:
-                self.logger.error("❌ Could not submit search - no valid button found")
-                return False
-                
-        except Exception as e:
-            self.logger.error(f"❌ Search submission failed: {e}")
-            return False
-
-    def _wait_for_advanced_form_ready(self) -> bool:
-        """PERFORMANCE OPTIMIZED: Minimal wait for form readiness."""
-        try:
-            # PERFORMANCE: Reduced timeout from 10s to 3s
-            WebDriverWait(self.driver, 3).until(
-                lambda driver: driver.find_element(By.CSS_SELECTOR, "#search-builder__within, #salary-from, #search-builder__jobtype")
-            )
             return True
-        except:
-            # PERFORMANCE: Don't fail completely, just log and continue
-            self.logger.debug("⚠️ Advanced form elements not fully ready, proceeding anyway")
-            return True  # Continue anyway
-
-    def _click_more_search_options(self) -> bool:
-        """PERFORMANCE OPTIMIZED: Fast advanced options expansion."""
+            
+        except Exception as e:
+            self.logger.error(f"❌ Failed to fill search form: {e}")
+            return False
+    
+    def _submit_search_streamlined(self) -> bool:
+        """
+        Submit the search form using the fastest method possible.
+        
+        Returns:
+            True if search was submitted successfully, False otherwise
+        """
         try:
-            # PERFORMANCE: Try most likely selector first
+            self.logger.info("Submitting search form...")
+            
+            # Find and click search button (no wait)
+            search_button = None
+            
+            # Try direct button selectors (fastest)
             button_selectors = [
-                "button.toggle-quick-advanced",    # Most common
-                "a.toggle-quick-advanced",         # Alternative
-                ".toggle-quick-advanced",          # Class only
-                "button:contains('More Search')",  # Text-based
-                "a:contains('More Search')",       # Link text-based  
+                "input[value*='View results']",
+                "input[type='submit']",
+                "button[type='submit']",
+                ".search-button",
+                "#search-submit"
             ]
             
             for selector in button_selectors:
                 try:
-                    if ":contains(" in selector:
-                        # Convert to XPath for text matching
-                        element_type = selector.split(":")[0]
-                        text = selector.split("'")[1]
-                        xpath = f"//{element_type}[contains(text(), '{text}')]"
-                        more_button = self.driver.find_element(By.XPATH, xpath)
-                    else:
-                        more_button = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    
-                    if more_button.is_displayed():
-                        more_button.click()
-                        self.logger.info(f"✅ Advanced options expanded: {selector}")
-                        return True
-                except:
+                    button = self.driver.find_element(By.CSS_SELECTOR, selector)
+                    if button.is_displayed() and button.is_enabled():
+                        search_button = button
+                        break
+                except Exception:
                     continue
             
-            # PERFORMANCE: JavaScript fallback (fastest)
-            try:
-                self.driver.execute_script("""
-                    var btn = document.querySelector('.toggle-quick-advanced, button[class*="toggle"], a[class*="toggle"]');
-                    if (btn) btn.click();
-                """)
-                self.logger.info("✅ Advanced options expanded (JS)")
-                return True
-            except:
-                pass
-                
-            self.logger.warning("⚠️ Could not find 'More Search Options' button")
-            return False
+            if not search_button:
+                self.logger.error("Could not find search submit button")
+                return False
             
+            # Submit using JavaScript (fastest and most reliable)
+            try:
+                self.driver.execute_script("arguments[0].click();", search_button)
+                self.logger.info("✅ Search form submitted")
+                
+                # Minimal wait for results to load (further reduced)
+                time.sleep(1)
+                
+                return True
+                
+            except Exception as e:
+                self.logger.error(f"Failed to submit search: {e}")
+                return False
+                
         except Exception as e:
-            self.logger.warning(f"⚠️ Error clicking more search options: {e}")
+            self.logger.error(f"Search submission failed: {e}")
             return False
     
     def _detect_total_pages(self) -> int:
@@ -2736,955 +2634,3 @@ class SearchManager:
         except Exception as e:
             self.logger.error(f"❌ Error in optimized extraction for result {index}: {e}")
             return None
-
-    # Helper methods for comprehensive search filter support
-
-    def _fill_field(self, selector: str, value: str, field_name: str) -> bool:
-        """Fill a simple input field."""
-        try:
-            element = self.driver.find_element(By.CSS_SELECTOR, selector)
-            
-            # Check if element is visible and interactable
-            if element.is_displayed() and element.is_enabled():
-                element.clear()
-                element.send_keys(value)
-                self.logger.info(f"✅ Filled {field_name}: {value}")
-                return True
-            else:
-                # Use JavaScript for hidden/non-interactable elements
-                self.driver.execute_script("arguments[0].value = arguments[1];", element, value)
-                # Trigger change event
-                self.driver.execute_script("arguments[0].dispatchEvent(new Event('change', {bubbles: true}));", element)
-                self.logger.info(f"✅ Filled {field_name} (via JS): {value}")
-                return True
-                
-        except Exception as e:
-            self.logger.warning(f"❌ Could not fill {field_name} with selector '{selector}': {e}")
-            return False
-
-    def _fill_select(self, selector: str, value: str, field_name: str) -> bool:
-        """Fill a select dropdown."""
-        try:
-            element = self.driver.find_element(By.CSS_SELECTOR, selector)
-            select = Select(element)
-            select.select_by_value(value)
-            self.logger.info(f"✅ Selected {field_name}: {value}")
-            return True
-        except Exception as e:
-            try:
-                # Try selecting by visible text as fallback
-                select.select_by_visible_text(value)
-                self.logger.info(f"✅ Selected {field_name}: {value}")
-                return True
-            except:
-                self.logger.debug(f"Could not select {field_name}: {e}")
-        return False
-
-    def _fill_multiselect(self, selector: str, values: List[str], field_name: str) -> bool:
-        """Fill a multi-select dropdown."""
-        try:
-            select_element = self.driver.find_element(By.CSS_SELECTOR, selector)
-            
-            # Debug: Log the select element state
-            visible = select_element.is_displayed()
-            enabled = select_element.is_enabled()
-            self.logger.info(f"🔍 {field_name} select: visible={visible}, enabled={enabled}")
-            
-            # For hidden selects, always use JavaScript approach
-            if not visible or not enabled:
-                self.logger.info(f"🔧 Using JavaScript for hidden {field_name} select")
-                selected_count = 0
-                for value in values:
-                    try:
-                        # Enhanced JavaScript selection with better option matching
-                        script = f"""
-                        var select = arguments[0];
-                        var options = select.options;
-                        var found = false;
-                        console.log('Looking for value: {value}');
-                        
-                        for (var i = 0; i < options.length; i++) {{
-                            var optionValue = options[i].value || '';
-                            var optionText = options[i].text || '';
-                            
-                            console.log('Option ' + i + ': value="' + optionValue + '" text="' + optionText + '"');
-                            
-                            // Try exact matches first
-                            if (optionValue === '{value}' || optionText === '{value}') {{
-                                options[i].selected = true;
-                                found = true;
-                                console.log('Exact match found: ' + optionText);
-                                break;
-                            }}
-                            
-                            // Try case-insensitive matches
-                            if (optionValue.toLowerCase() === '{value.lower()}' || optionText.toLowerCase() === '{value.lower()}') {{
-                                options[i].selected = true;
-                                found = true;
-                                console.log('Case-insensitive match found: ' + optionText);
-                                break;
-                            }}
-                            
-                            // Try partial matches for complex values
-                            if (optionText.toLowerCase().includes('{value.lower()}') || optionValue.toLowerCase().includes('{value.lower()}')) {{
-                                options[i].selected = true;
-                                found = true;
-                                console.log('Partial match found: ' + optionText);
-                                break;
-                            }}
-                        }}
-                        
-                        if (found) {{
-                            // Trigger change event
-                            select.dispatchEvent(new Event('change', {{bubbles: true}}));
-                            select.dispatchEvent(new Event('input', {{bubbles: true}}));
-                        }}
-                        
-                        return found;
-                        """
-                        
-                        result = self.driver.execute_script(script, select_element)
-                        if result:
-                            selected_count += 1
-                            self.logger.info(f"✅ Selected {field_name} option (via enhanced JS): {value}")
-                        else:
-                            self.logger.warning(f"❌ Could not find {field_name} option '{value}' in dropdown")
-                    except Exception as e:
-                        self.logger.warning(f"❌ Could not select {field_name} option '{value}' via JS: {e}")
-                
-                if selected_count > 0:
-                    self.logger.info(f"✅ Selected {selected_count}/{len(values)} {field_name} options (via enhanced JS)")
-                    return True
-                else:
-                    self.logger.warning(f"❌ No {field_name} options were selected via enhanced JS")
-                    return False
-            
-            else:
-                # Use normal Selenium Select for visible elements
-                select = Select(select_element)
-                selected_count = 0
-                for value in values:
-                    try:
-                        select.select_by_visible_text(value)
-                        selected_count += 1
-                        self.logger.info(f"✅ Selected {field_name} option: {value}")
-                    except Exception as e:
-                        try:
-                            select.select_by_value(value)
-                            selected_count += 1
-                            self.logger.info(f"✅ Selected {field_name} option by value: {value}")
-                        except Exception as e2:
-                            self.logger.warning(f"❌ Could not select {field_name} option '{value}': {e2}")
-                
-                if selected_count > 0:
-                    self.logger.info(f"✅ Selected {selected_count}/{len(values)} {field_name} options")
-                    return True
-                else:
-                    self.logger.warning(f"❌ No {field_name} options were selected")
-                    return False
-                   
-        except Exception as e:
-            self.logger.warning(f"❌ Could not find {field_name} multiselect with selector '{selector}': {e}")
-            return False
-
-    def _fill_salary_range(self, salary_min: Optional[str], salary_max: Optional[str]) -> bool:
-        """Fill salary range fields or select."""
-        try:
-            success = False
-            
-            # Target the correct visible salary dropdowns: #salary-from and #salary-to
-            
-            if salary_min:
-                try:
-                    # Target the visible salary minimum dropdown
-                    min_select = self.driver.find_element(By.CSS_SELECTOR, "#salary-from")
-                    
-                    if min_select.is_displayed() and min_select.is_enabled():
-                        select = Select(min_select)
-                        
-                        # Convert salary to the expected £ format for minimum
-                        min_val = int(salary_min)
-                        if min_val <= 1:
-                            salary_text = "£1"
-                        elif min_val <= 10000:
-                            salary_text = "£10,001"
-                        elif min_val <= 15000:
-                            salary_text = "£15,001"
-                        elif min_val <= 20000:
-                            salary_text = "£20,001"
-                        elif min_val <= 25000:
-                            salary_text = "£25,001"
-                        elif min_val <= 30000:
-                            salary_text = "£30,001"
-                        elif min_val <= 40000:
-                            salary_text = "£40,001"
-                        elif min_val <= 60000:
-                            salary_text = "£60,001"
-                        else:
-                            salary_text = "£80,001"
-                        
-                        # Select the salary minimum option
-                        try:
-                            select.select_by_visible_text(salary_text)
-                            self.logger.info(f"✅ Selected salary minimum: {salary_text}")
-                            success = True
-                        except:
-                            # Fallback to selecting by value if text fails
-                            try:
-                                options = select.options
-                                for option in options:
-                                    if salary_text in option.text:
-                                        option.click()
-                                        self.logger.info(f"✅ Selected salary minimum (by click): {salary_text}")
-                                        success = True
-                                        break
-                            except Exception as e:
-                                self.logger.warning(f"❌ Could not select salary minimum: {e}")
-                    
-                except Exception as e:
-                    self.logger.warning(f"❌ Could not find salary minimum field: {e}")
-            
-            if salary_max:
-                try:
-                    # Target the visible salary maximum dropdown  
-                    max_select = self.driver.find_element(By.CSS_SELECTOR, "#salary-to")
-                    
-                    if max_select.is_displayed() and max_select.is_enabled():
-                        select = Select(max_select)
-                        
-                        # Convert salary to the expected £ format for maximum
-                        max_val = int(salary_max)
-                        if max_val <= 10000:
-                            salary_text = "£10,000"
-                        elif max_val <= 15000:
-                            salary_text = "£15,000"
-                        elif max_val <= 20000:
-                            salary_text = "£20,000"
-                        elif max_val <= 25000:
-                            salary_text = "£25,000"
-                        elif max_val <= 30000:
-                            salary_text = "£30,000"
-                        elif max_val <= 40000:
-                            salary_text = "£40,000"
-                        elif max_val <= 60000:
-                            salary_text = "£60,000"
-                        elif max_val <= 80000:
-                            salary_text = "£80,000"
-                        elif max_val <= 100000:
-                            salary_text = "£100,000"
-                        else:
-                            salary_text = "£100,000+"
-                        
-                        # Select the salary maximum option
-                        try:
-                            select.select_by_visible_text(salary_text)
-                            self.logger.info(f"✅ Selected salary maximum: {salary_text}")
-                            success = True
-                        except:
-                            # Fallback to selecting by value if text fails
-                            try:
-                                options = select.options
-                                for option in options:
-                                    if salary_text in option.text:
-                                        option.click()
-                                        self.logger.info(f"✅ Selected salary maximum (by click): {salary_text}")
-                                        success = True
-                                        break
-                            except Exception as e:
-                                self.logger.warning(f"❌ Could not select salary maximum: {e}")
-                    
-                except Exception as e:
-                    self.logger.warning(f"❌ Could not find salary maximum field: {e}")
-            
-            return success
-            
-        except Exception as e:
-            self.logger.warning(f"❌ Could not fill salary range: {e}")
-            return False
-
-    def _fill_checkbox(self, selector: str, checked: bool, field_name: str) -> bool:
-        """Fill a checkbox."""
-        try:
-            element = self.driver.find_element(By.CSS_SELECTOR, selector)
-            if element.is_selected() != checked:
-                element.click()
-                self.logger.info(f"✅ Set {field_name}: {'checked' if checked else 'unchecked'}")
-            return True
-        except Exception as e:
-            self.logger.debug(f"Could not set {field_name}: {e}")
-        return False
-
-    def _fill_radio(self, selector: str, value: str, field_name: str) -> bool:
-        """Fill a radio button."""
-        try:
-            element = self.driver.find_element(By.CSS_SELECTOR, f"{selector}[value='{value}']")
-            element.click()
-            self.logger.info(f"✅ Selected {field_name}: {value}")
-            return True
-        except Exception as e:
-            self.logger.debug(f"Could not select {field_name}: {e}")
-        return False
-
-    def _click_more_search_options(self) -> bool:
-        """PERFORMANCE OPTIMIZED: Fast advanced options expansion."""
-        try:
-            # PERFORMANCE: Try most likely selector first
-            button_selectors = [
-                "button.toggle-quick-advanced",    # Most common
-                "a.toggle-quick-advanced",         # Alternative
-                ".toggle-quick-advanced",          # Class only
-                "button:contains('More Search')",  # Text-based
-                "a:contains('More Search')",       # Link text-based  
-            ]
-            
-            for selector in button_selectors:
-                try:
-                    if ":contains(" in selector:
-                        # Convert to XPath for text matching
-                        element_type = selector.split(":")[0]
-                        text = selector.split("'")[1]
-                        xpath = f"//{element_type}[contains(text(), '{text}')]"
-                        more_button = self.driver.find_element(By.XPATH, xpath)
-                    else:
-                        more_button = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    
-                    if more_button.is_displayed():
-                        more_button.click()
-                        self.logger.info(f"✅ Advanced options expanded: {selector}")
-                        return True
-                except:
-                    continue
-            
-            # PERFORMANCE: JavaScript fallback (fastest)
-            try:
-                self.driver.execute_script("""
-                    var btn = document.querySelector('.toggle-quick-advanced, button[class*="toggle"], a[class*="toggle"]');
-                    if (btn) btn.click();
-                """)
-                self.logger.info("✅ Advanced options expanded (JS)")
-                return True
-            except:
-                pass
-                
-            self.logger.warning("⚠️ Could not find 'More Search Options' button")
-            return False
-            
-        except Exception as e:
-            self.logger.warning(f"⚠️ Error clicking more search options: {e}")
-            return False
-
-    def _wait_for_advanced_form_ready(self) -> bool:
-        """PERFORMANCE OPTIMIZED: Minimal wait for form readiness."""
-        try:
-            # PERFORMANCE: Reduced timeout from 10s to 3s
-            WebDriverWait(self.driver, 3).until(
-                lambda driver: driver.find_element(By.CSS_SELECTOR, "#search-builder__within, #salary-from, #search-builder__jobtype")
-            )
-            return True
-        except:
-            # PERFORMANCE: Don't fail completely, just log and continue
-            self.logger.debug("⚠️ Advanced form elements not fully ready, proceeding anyway")
-            return True  # Continue anyway
-
-    def _validate_form_completion(self, keywords: List[str], location: Optional[str], 
-                                 salary_min: Optional[str], job_type: Optional[List[str]], 
-                                 industry: Optional[List[str]]) -> bool:
-        """Validate that critical form fields have been properly set."""
-        try:
-            validation_errors = []
-            
-            # Check keywords field
-            try:
-                keywords_field = self.driver.find_element(By.CSS_SELECTOR, "input.boolean__input")
-                current_value = keywords_field.get_attribute("value") or ""
-                expected_keywords = " ".join(keywords)
-                if expected_keywords.lower() not in current_value.lower():
-                    validation_errors.append(f"Keywords mismatch: expected '{expected_keywords}', found '{current_value}'")
-                else:
-                    self.logger.debug(f"✓ Keywords validated: {current_value}")
-            except Exception as e:
-                validation_errors.append(f"Could not validate keywords field: {e}")
-            
-            # Check location field (if provided)
-            if location:
-                try:
-                    location_inputs = self.driver.find_elements(By.CSS_SELECTOR, ".form-combobox__control")
-                    location_found = False
-                    for loc_input in location_inputs:
-                        if loc_input.is_displayed():
-                            current_value = loc_input.get_attribute("value") or ""
-                            if location.lower() in current_value.lower():
-                                location_found = True
-                                self.logger.debug(f"✓ Location validated: {current_value}")
-                                break
-                    
-                    if not location_found:
-                        validation_errors.append(f"Location not set: expected '{location}'")
-                except Exception as e:
-                    validation_errors.append(f"Could not validate location field: {e}")
-            
-            # Check salary minimum (if provided)
-            if salary_min:
-                try:
-                    salary_select = self.driver.find_element(By.CSS_SELECTOR, "#salary-from")
-                    selected_option = salary_select.find_element(By.CSS_SELECTOR, "option:checked")
-                    selected_text = selected_option.text or ""
-                    if "Any" in selected_text:
-                        validation_errors.append(f"Salary minimum not set (still shows 'Any')")
-                    else:
-                        self.logger.debug(f"✓ Salary minimum validated: {selected_text}")
-                except Exception as e:
-                    validation_errors.append(f"Could not validate salary minimum: {e}")
-            
-            # Check job type (if provided)
-            if job_type:
-                try:
-                    job_select = self.driver.find_element(By.CSS_SELECTOR, "select[name='job_type']")
-                    # For hidden selects, check if any non-default option is selected
-                    selected_options = job_select.find_elements(By.CSS_SELECTOR, "option:checked")
-                    if selected_options:
-                        selected_text = selected_options[0].get_attribute("value") or ""
-                        if not selected_text or selected_text == "":
-                            validation_errors.append("Job type not properly selected")
-                        else:
-                            self.logger.debug(f"✓ Job type validated: {selected_text}")
-                    else:
-                        validation_errors.append("No job type option selected")
-                except Exception as e:
-                    validation_errors.append(f"Could not validate job type: {e}")
-            
-            # Check industry (if provided) 
-            if industry:
-                try:
-                    industry_select = self.driver.find_element(By.CSS_SELECTOR, "select[name='industry']")
-                    selected_options = industry_select.find_elements(By.CSS_SELECTOR, "option:checked")
-                    if selected_options:
-                        selected_text = selected_options[0].get_attribute("value") or ""
-                        if not selected_text or selected_text == "":
-                            validation_errors.append("Industry not properly selected")
-                        else:
-                            self.logger.debug(f"✓ Industry validated: {selected_text}")
-                    else:
-                        validation_errors.append("No industry option selected")
-                except Exception as e:
-                    validation_errors.append(f"Could not validate industry: {e}")
-            
-            # Report validation results
-            if validation_errors:
-                self.logger.warning(f"⚠️ Form validation found {len(validation_errors)} issues:")
-                for error in validation_errors:
-                    self.logger.warning(f"  - {error}")
-                return False
-            else:
-                self.logger.info("✅ Form validation passed - all critical fields set correctly")
-                return True
-                
-        except Exception as e:
-            self.logger.warning(f"⚠️ Error during form validation: {e}")
-            return False
-
-    # OPTIMIZED FAST FILLING METHODS
-
-    def _fill_location_and_distance_fast(self, location: Optional[str], distance: Optional[int]) -> None:
-        """PERFORMANCE OPTIMIZED: Ultra-fast location and distance filling."""
-        try:
-            # PERFORMANCE: Process both fields simultaneously using JavaScript
-            if location and distance:
-                # Combined approach - fastest for both fields
-                combined_script = f'''
-                // Fill location
-                var locationInputs = document.querySelectorAll('input[placeholder*="Location"], input[name="location"], .form-combobox__control');
-                for (var i = 0; i < locationInputs.length; i++) {{
-                    if (locationInputs[i].offsetParent !== null) {{ // visible check
-                        locationInputs[i].value = "{location}";
-                        locationInputs[i].dispatchEvent(new Event('input', {{bubbles: true}}));
-                        locationInputs[i].dispatchEvent(new Event('change', {{bubbles: true}}));
-                        break;
-                    }}
-                }}
-                
-                // Fill distance
-                var distanceInput = document.getElementById('search-builder__within');
-                if (distanceInput) {{
-                    distanceInput.value = "{distance}";
-                    distanceInput.dispatchEvent(new Event('input', {{bubbles: true}}));
-                    distanceInput.dispatchEvent(new Event('change', {{bubbles: true}}));
-                }}
-                
-                return {{location: "{location}", distance: "{distance}"}};
-                '''
-                
-                try:
-                    result = self.driver.execute_script(combined_script)
-                    self.logger.info(f"✅ Location & Distance (Turbo): {location}, {distance} miles")
-                    return
-                except:
-                    pass
-            
-            # Fallback: Individual field processing (still optimized)
-            if location:
-                try:
-                    # Fast location filling - try visible input first
-                    location_input = self.driver.find_element(By.CSS_SELECTOR, "input[placeholder*='Location']:not([style*='display: none'])")
-                    location_input.clear()
-                    location_input.send_keys(location)
-                    self.logger.info(f"✅ Location: {location}")
-                except:
-                    # JavaScript fallback
-                    self.driver.execute_script(f"document.querySelector('input[name=\"location\"]').value = '{location}';")
-                    self.logger.info(f"✅ Location (JS): {location}")
-            
-            if distance:
-                try:
-                    # Direct distance field access
-                    distance_input = self.driver.find_element(By.CSS_SELECTOR, "#search-builder__within")
-                    distance_input.clear()
-                    distance_input.send_keys(str(distance))
-                    self.logger.info(f"✅ Distance: {distance} miles")
-                except:
-                    self.logger.warning(f"⚠️ Could not fill distance: {distance}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Location/Distance error: {e}")
-
-    def _fill_salary_range_fast(self, salary_min: Optional[int], salary_max: Optional[int]) -> None:
-        """PERFORMANCE OPTIMIZED: Lightning-fast salary range selection."""
-        try:
-            if not (salary_min or salary_max):
-                return
-                
-            # PERFORMANCE: Direct JavaScript approach (fastest)
-            salary_script = ""
-            
-            if salary_min:
-                # Convert to int if it's a string
-                min_val = int(salary_min) if isinstance(salary_min, str) else salary_min
-                
-                # Map to visible dropdown values
-                if min_val <= 20000:
-                    target_min = "Up to £20,000"
-                elif min_val <= 30000:
-                    target_min = "£20,001 - £30,000"
-                elif min_val <= 40000:
-                    target_min = "£30,001 - £40,000"
-                elif min_val <= 50000:
-                    target_min = "£40,001 - £50,000"
-                elif min_val <= 60000:
-                    target_min = "£50,001 - £60,000"
-                elif min_val <= 70000:
-                    target_min = "£60,001 - £70,000"
-                elif min_val <= 80000:
-                    target_min = "£70,001 - £80,000"
-                elif min_val <= 90000:
-                    target_min = "£80,001 - £90,000"
-                elif min_val <= 100000:
-                    target_min = "£90,001 - £100,000"
-                else:
-                    target_min = "£100,000+"
-                
-                salary_script += f'''
-                var salaryMinSelect = document.getElementById('salary-from');
-                if (salaryMinSelect) {{
-                    for (var i = 0; i < salaryMinSelect.options.length; i++) {{
-                        if (salaryMinSelect.options[i].text === "{target_min}") {{
-                            salaryMinSelect.selectedIndex = i;
-                            salaryMinSelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                            break;
-                        }}
-                    }}
-                }}
-                '''
-            
-            if salary_max:
-                # Convert to int if it's a string
-                max_val = int(salary_max) if isinstance(salary_max, str) else salary_max
-                
-                # Map to visible dropdown values
-                if max_val <= 30000:
-                    target_max = "£30,000"
-                elif max_val <= 40000:
-                    target_max = "£40,000"
-                elif max_val <= 50000:
-                    target_max = "£50,000"
-                elif max_val <= 60000:
-                    target_max = "£60,000"
-                elif max_val <= 70000:
-                    target_max = "£70,000"
-                elif max_val <= 80000:
-                    target_max = "£80,000"
-                elif max_val <= 90000:
-                    target_max = "£90,000"
-                elif max_val <= 100000:
-                    target_max = "£100,000"
-                else:
-                    target_max = "£100,000+"
-                
-                salary_script += f'''
-                var salaryMaxSelect = document.getElementById('salary-to');
-                if (salaryMaxSelect) {{
-                    for (var i = 0; i < salaryMaxSelect.options.length; i++) {{
-                        if (salaryMaxSelect.options[i].text === "{target_max}") {{
-                            salaryMaxSelect.selectedIndex = i;
-                            salaryMaxSelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                            break;
-                        }}
-                    }}
-                }}
-                '''
-            
-            if salary_script:
-                self.driver.execute_script(salary_script)
-                if salary_min:
-                    self.logger.info(f"✅ Salary Min (Turbo): {target_min}")
-                if salary_max:
-                    self.logger.info(f"✅ Salary Max (Turbo): {target_max}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Salary range error: {e}")
-
-    def _fill_checkboxes_fast(self, willing_to_relocate: Optional[bool], 
-                             uk_driving_licence: Optional[bool], 
-                             hide_recently_viewed: Optional[bool]) -> None:
-        """PERFORMANCE OPTIMIZED: Lightning-fast checkbox handling."""
-        try:
-            # PERFORMANCE: Single JavaScript execution for all checkboxes
-            checkbox_script = ""
-            
-            if willing_to_relocate is not None:
-                checkbox_script += f'''
-                var relocateBox = document.getElementById('search-builder__relocate');
-                if (relocateBox && relocateBox.checked !== {str(willing_to_relocate).lower()}) {{
-                    relocateBox.click();
-                }}
-                '''
-            
-            if uk_driving_licence is not None:
-                checkbox_script += f'''
-                var licenceBox = document.getElementById('search-builder__uklicence');
-                if (licenceBox && licenceBox.checked !== {str(uk_driving_licence).lower()}) {{
-                    licenceBox.click();
-                }}
-                '''
-            
-            if hide_recently_viewed is not None:
-                checkbox_script += f'''
-                var hideBox = document.getElementById('search-builder__hide-viewed-cvs');
-                if (hideBox && hideBox.checked !== {str(hide_recently_viewed).lower()}) {{
-                    hideBox.click();
-                }}
-                '''
-            
-            if checkbox_script:
-                self.driver.execute_script(checkbox_script)
-                
-                if willing_to_relocate is not None:
-                    self.logger.info(f"✅ Relocate (Turbo): {willing_to_relocate}")
-                if uk_driving_licence is not None:
-                    self.logger.info(f"✅ Driving Licence (Turbo): {uk_driving_licence}")
-                if hide_recently_viewed is not None:
-                    self.logger.info(f"✅ Hide Viewed (Turbo): {hide_recently_viewed}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Checkboxes error: {e}")
-
-    def _fill_advanced_keywords_fast(self, must_have: Optional[str], 
-                                   any_keywords: Optional[str], 
-                                   none_keywords: Optional[str]) -> None:
-        """PERFORMANCE OPTIMIZED: Lightning-fast hidden field population."""
-        try:
-            # PERFORMANCE: Single JavaScript execution for all keyword fields
-            keyword_script = ""
-            
-            if must_have:
-                keyword_script += f'''
-                var mustHaveField = document.querySelector('input[name="exact"]');
-                if (mustHaveField) {{
-                    mustHaveField.value = "{must_have}";
-                    mustHaveField.dispatchEvent(new Event('input', {{bubbles: true}}));
-                }}
-                '''
-            
-            if any_keywords:
-                keyword_script += f'''
-                var anyField = document.querySelector('input[name="any"]');
-                if (anyField) {{
-                    anyField.value = "{any_keywords}";
-                    anyField.dispatchEvent(new Event('input', {{bubbles: true}}));
-                }}
-                '''
-            
-            if none_keywords:
-                keyword_script += f'''
-                var noneField = document.querySelector('input[name="none"]');
-                if (noneField) {{
-                    noneField.value = "{none_keywords}";
-                    noneField.dispatchEvent(new Event('input', {{bubbles: true}}));
-                }}
-                '''
-            
-            if keyword_script:
-                self.driver.execute_script(keyword_script)
-                
-                if must_have:
-                    self.logger.info(f"✅ Must Have (Turbo): {must_have}")
-                if any_keywords:
-                    self.logger.info(f"✅ Any Keywords (Turbo): {any_keywords}")
-                if none_keywords:
-                    self.logger.info(f"✅ None Keywords (Turbo): {none_keywords}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Advanced keywords error: {e}")
-
-    def _fill_languages_and_sort_fast(self, languages: Optional[List[str]], 
-                                     sort_order: Optional[str]) -> None:
-        """PERFORMANCE OPTIMIZED: Lightning-fast language and sort selection."""
-        try:
-            # PERFORMANCE: Combined execution for maximum speed
-            combined_script = ""
-            
-            if languages:
-                combined_script += f'''
-                var languageSelect = document.getElementById('search-builder__language');
-                var selectedLangs = [];
-                if (languageSelect) {{
-                    var targetLanguages = {languages};
-                    for (var i = 0; i < languageSelect.options.length; i++) languageSelect.options[i].selected = false;
-                    for (var j = 0; j < targetLanguages.length; j++) {{
-                        for (var i = 0; i < languageSelect.options.length; i++) {{
-                            var optionText = languageSelect.options[i].text.trim();
-                            if (optionText === targetLanguages[j] || optionText.toLowerCase().includes(targetLanguages[j].toLowerCase())) {{
-                                languageSelect.options[i].selected = true;
-                                selectedLangs.push(optionText);
-                                break;
-                            }}
-                        }}
-                    }}
-                    languageSelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                    if (typeof jQuery !== 'undefined') jQuery('#search-builder__language').trigger('chosen:updated');
-                }}
-                '''
-            
-            if sort_order:
-                # Map sort order to radio values
-                sort_mapping = {
-                    "relevancy": "relevancy desc", "relevance": "relevancy desc", "smart": "relevancy desc",
-                    "updated": "updated desc", "recent": "updated desc", "newest": "updated desc",
-                    "distance": "distance asc", "location": "distance asc", "nearest": "distance asc"
-                }
-                target_value = sort_mapping.get(sort_order.lower(), sort_order.lower())
-                if not target_value.endswith((" desc", " asc")):
-                    target_value = f"{target_value} desc"
-                
-                combined_script += f'''
-                var sortRadios = document.querySelectorAll('input[name="sort"]');
-                for (var i = 0; i < sortRadios.length; i++) {{
-                    if (sortRadios[i].value === "{target_value}") {{
-                        sortRadios[i].click();
-                        break;
-                    }}
-                }}
-                '''
-            
-            if combined_script:
-                result = self.driver.execute_script(combined_script + "\nreturn selectedLangs || [];")
-                
-                if languages:
-                    if result:
-                        for lang in result:
-                            self.logger.info(f"✅ Language (Turbo): {lang}")
-                    else:
-                        self.logger.info(f"✅ Languages (Turbo): {languages}")
-                
-                if sort_order:
-                    self.logger.info(f"✅ Sort Order (Turbo): {target_value}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Languages/Sort error: {e}")
-
-    def _debug_form_fields(self) -> None:
-        """Debug method to inspect actual form fields and their names/IDs."""
-        try:
-            self.logger.info("🔍 DEBUGGING: Inspecting actual form fields...")
-            
-            # Find all input fields
-            inputs = self.driver.find_elements(By.CSS_SELECTOR, "input")
-            self.logger.info(f"📝 Found {len(inputs)} input fields:")
-            for i, inp in enumerate(inputs[:20]):  # Limit to first 20
-                try:
-                    name = inp.get_attribute("name") or "NO_NAME"
-                    input_id = inp.get_attribute("id") or "NO_ID"
-                    input_type = inp.get_attribute("type") or "text"
-                    placeholder = inp.get_attribute("placeholder") or "NO_PLACEHOLDER"
-                    value = inp.get_attribute("value") or "NO_VALUE"
-                    visible = inp.is_displayed()
-                    self.logger.info(f"  Input {i}: name='{name}' id='{input_id}' type='{input_type}' placeholder='{placeholder}' value='{value}' visible={visible}")
-                except:
-                    continue
-            
-            # Find all select fields
-            selects = self.driver.find_elements(By.CSS_SELECTOR, "select")
-            self.logger.info(f"📝 Found {len(selects)} select fields:")
-            for i, sel in enumerate(selects):
-                try:
-                    name = sel.get_attribute("name") or "NO_NAME"
-                    select_id = sel.get_attribute("id") or "NO_ID"
-                    visible = sel.is_displayed()
-                    options_count = len(sel.find_elements(By.CSS_SELECTOR, "option"))
-                    self.logger.info(f"  Select {i}: name='{name}' id='{select_id}' visible={visible} options={options_count}")
-                except:
-                    continue
-                    
-            # Find all checkboxes
-            checkboxes = self.driver.find_elements(By.CSS_SELECTOR, "input[type='checkbox']")
-            self.logger.info(f"📝 Found {len(checkboxes)} checkbox fields:")
-            for i, cb in enumerate(checkboxes):
-                try:
-                    name = cb.get_attribute("name") or "NO_NAME"
-                    cb_id = cb.get_attribute("id") or "NO_ID"
-                    value = cb.get_attribute("value") or "NO_VALUE"
-                    visible = cb.is_displayed()
-                    checked = cb.is_selected()
-                    self.logger.info(f"  Checkbox {i}: name='{name}' id='{cb_id}' value='{value}' visible={visible} checked={checked}")
-                except:
-                    continue
-                    
-        except Exception as e:
-            self.logger.error(f"❌ Debug form fields error: {e}")
-
-    def _fill_time_and_match_fast(self, time_period: Optional[str], minimum_match: Optional[str]) -> None:
-        """PERFORMANCE OPTIMIZED: Ultra-fast dropdown selections."""
-        try:
-            # PERFORMANCE: Combined JavaScript for both fields
-            script_parts = []
-            
-            if time_period:
-                # Convert numeric to text format
-                if time_period.isdigit():
-                    period_text = f"{time_period} days"
-                else:
-                    period_text = time_period
-                
-                script_parts.append(f'''
-                var timeSelect = document.getElementById('search-builder__time');
-                if (timeSelect) {{
-                    for (var i = 0; i < timeSelect.options.length; i++) {{
-                        if (timeSelect.options[i].text === "{period_text}") {{
-                            timeSelect.selectedIndex = i;
-                            timeSelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                            break;
-                        }}
-                    }}
-                }}
-                ''')
-            
-            if minimum_match:
-                script_parts.append(f'''
-                var matchSelect = document.querySelector('select[name="min_match"]');
-                if (matchSelect) {{
-                    for (var i = 0; i < matchSelect.options.length; i++) {{
-                        if (matchSelect.options[i].text === "{minimum_match}" || matchSelect.options[i].value === "{minimum_match}") {{
-                            matchSelect.selectedIndex = i;
-                            matchSelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                            break;
-                        }}
-                    }}
-                }}
-                ''')
-            
-            if script_parts:
-                combined_script = '\n'.join(script_parts)
-                self.driver.execute_script(combined_script)
-                
-                if time_period:
-                    self.logger.info(f"✅ Time Period (Turbo): {period_text}")
-                if minimum_match:
-                    self.logger.info(f"✅ Min Match (Turbo): {minimum_match}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Time/Match error: {e}")
-
-    def _fill_job_and_industry_fast(self, job_type: Optional[List[str]], industry: Optional[List[str]]) -> None:
-        """PERFORMANCE OPTIMIZED: Lightning-fast multiselect via pure JavaScript."""
-        try:
-            if not (job_type or industry):
-                return
-            
-            # PERFORMANCE: Single JavaScript execution for both fields
-            combined_script = "var results = {job: [], industry: []};\n"
-            
-            if job_type:
-                job_values = []
-                for jtype in job_type:
-                    if jtype.lower() == "permanent":
-                        job_values.append("Permanent")
-                    elif jtype.lower() == "contract":
-                        job_values.append("Contract")
-                    elif jtype.lower() == "temporary":
-                        job_values.append("Temporary")
-                    elif jtype.lower() in ["part time", "part-time", "parttime"]:
-                        job_values.append("Part Time")
-                    else:
-                        job_values.append(jtype)
-                
-                combined_script += f'''
-                var jobSelect = document.getElementById('search-builder__jobtype');
-                if (jobSelect) {{
-                    var targetJobs = {job_values};
-                    for (var i = 0; i < jobSelect.options.length; i++) jobSelect.options[i].selected = false;
-                    for (var j = 0; j < targetJobs.length; j++) {{
-                        for (var i = 0; i < jobSelect.options.length; i++) {{
-                            if (jobSelect.options[i].value === targetJobs[j]) {{
-                                jobSelect.options[i].selected = true;
-                                results.job.push(targetJobs[j]);
-                                break;
-                            }}
-                        }}
-                    }}
-                    jobSelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                    if (typeof jQuery !== 'undefined') jQuery('#search-builder__jobtype').trigger('chosen:updated');
-                }}
-                '''
-            
-            if industry:
-                industry_values = []
-                for ind in industry:
-                    if "it" in ind.lower() and ("internet" in ind.lower() or "technical" in ind.lower()):
-                        industry_values.append("IT%2FInternet%2FTechnical")
-                    else:
-                        industry_encoded = ind.replace("/", "%2F").replace(" ", "%20")
-                        industry_values.append(industry_encoded)
-                
-                combined_script += f'''
-                var industrySelect = document.getElementById('search-builder__industry');
-                if (industrySelect) {{
-                    var targetIndustries = {industry_values};
-                    for (var i = 0; i < industrySelect.options.length; i++) industrySelect.options[i].selected = false;
-                    for (var j = 0; j < targetIndustries.length; j++) {{
-                        for (var i = 0; i < industrySelect.options.length; i++) {{
-                            if (industrySelect.options[i].value === targetIndustries[j]) {{
-                                industrySelect.options[i].selected = true;
-                                results.industry.push(targetIndustries[j]);
-                                break;
-                            }}
-                        }}
-                    }}
-                    industrySelect.dispatchEvent(new Event('change', {{bubbles: true}}));
-                    if (typeof jQuery !== 'undefined') jQuery('#search-builder__industry').trigger('chosen:updated');
-                }}
-                '''
-            
-            combined_script += "\nreturn results;"
-            
-            result = self.driver.execute_script(combined_script)
-            
-            # Log results
-            if job_type and result.get('job'):
-                for selected in result['job']:
-                    self.logger.info(f"✅ Job Type (Turbo): {selected}")
-            if industry and result.get('industry'):
-                for selected in result['industry']:
-                    decoded = selected.replace('%2F', '/').replace('%20', ' ')
-                    self.logger.info(f"✅ Industry (Turbo): {decoded}")
-                        
-        except Exception as e:
-            self.logger.warning(f"⚠️ Job/Industry error: {e}")

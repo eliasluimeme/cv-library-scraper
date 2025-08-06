@@ -1,0 +1,75 @@
+=== FORM FIELD ANALYSIS ===
+
+INPUTS (87 found):
+  Input 0: name="time" id="NO_ID" type="hidden" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 1: name="id" id="cvref" type="text" placeholder="CV Ref No." value="NO_VALUE" visible=True
+  Input 2: name="NO_NAME" id="NO_ID" type="submit" placeholder="NO_PLACEHOLDER" value="Find CV" visible=True
+  Input 3: name="NO_NAME" id="save-search-name" type="text" placeholder="Search Name" value="NO_VALUE" visible=False
+  Input 4: name="NO_NAME" id="NO_ID" type="submit" placeholder="NO_PLACEHOLDER" value="Save Search" visible=False
+  Input 5: name="new_folder_name" id="new-folder-name" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 6: name="default_distance" id="NO_ID" type="hidden" placeholder="NO_PLACEHOLDER" value="10" visible=False
+  Input 7: name="basic" id="NO_ID" type="hidden" placeholder="NO_PLACEHOLDER" value="0" visible=False
+  Input 8: name="from_popular_search" id="NO_ID" type="hidden" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 9: name="stem_phrases" id="expandPhrases" type="checkbox" placeholder="NO_PLACEHOLDER" value="1" visible=False
+  Input 10: name="query_field" id="jobtitleOnly" type="checkbox" placeholder="NO_PLACEHOLDER" value="current_job_title" visible=False
+  Input 11: name="cand_name_only" id="candnameOnly" type="checkbox" placeholder="NO_PLACEHOLDER" value="0" visible=False
+  Input 12: name="cvswitch" id="keywords-checkbox" type="radio" placeholder="NO_PLACEHOLDER" value="on" visible=False
+  Input 13: name="cvswitch" id="candname-checkbox" type="radio" placeholder="NO_PLACEHOLDER" value="on" visible=False
+  Input 14: name="search_cand_name" id="search_cand_name" type="hidden" placeholder="NO_PLACEHOLDER" value="0" visible=False
+  Input 15: name="exact" id="must-have" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 16: name="any" id="NO_ID" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 17: name="none" id="NO_ID" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 18: name="cand-exact" id="cand-name" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 19: name="location_type" id="location_type_location" type="radio" placeholder="NO_PLACEHOLDER" value="text" visible=False
+  Input 20: name="NO_NAME" id="NO_ID" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 21: name="location" id="location" type="text" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 22: name="distance" id="NO_ID" type="number" placeholder="NO_PLACEHOLDER" value="NO_VALUE" visible=False
+  Input 23: name="location_type" id="location_type_or" type="radio" placeholder="NO_PLACEHOLDER" value="select" visible=False
+  Input 24: name="language_type" id="matchSelected" type="radio" placeholder="NO_PLACEHOLDER" value="all" visible=False
+  Input 25: name="language_type" id="matchAny" type="radio" placeholder="NO_PLACEHOLDER" value="any" visible=False
+  Input 26: name="willing_to_relocate" id="relocate" type="checkbox" placeholder="NO_PLACEHOLDER" value="1" visible=False
+  Input 27: name="has_driving_licence" id="uklicence" type="checkbox" placeholder="NO_PLACEHOLDER" value="1" visible=False
+  Input 28: name="hide_recently_viewed_candidates" id="hide_recently_viewed_candidates" type="checkbox" placeholder="NO_PLACEHOLDER" value="1" visible=False
+  Input 29: name="sort" id="orderSmartmatch" type="radio" placeholder="NO_PLACEHOLDER" value="relevancy desc" visible=False
+
+SELECTS (20 found):
+  Select 0: name="NO_NAME" id="save-cvs-folder" visible=False options=0 first_options=[]
+  Select 1: name="new_folder_parent" id="new-folder-parent" visible=False options=0 first_options=[]
+  Select 2: name="salary" id="NO_ID" visible=False options=12 first_options=['EMPTY', '1-10000', '10001-15000', '15001-20000', '20001-25000', '25001-30000', '30001-40000', '40001-60000', '60001-80000', '80001-100000']
+  Select 3: name="type" id="NO_ID" visible=False options=5 first_options=['EMPTY', 'Permanent', 'Contract', 'Temporary', 'Part Time']
+  Select 4: name="county" id="locationSelect" visible=False options=193 first_options=['EMPTY', 'England', 'London', 'Greater London', 'Middlesex', 'South East', 'Berkshire', 'East Sussex', 'Hampshire', 'Kent']
+  Select 5: name="time" id="time" visible=False options=11 first_options=['24 hours', '3 days', '7 days', '14 days', '28 days', '2 months', '3 months', '6 months', '1 year', '2 years']
+  Select 6: name="industry" id="industry" visible=False options=72 first_options=['EMPTY', 'Accountancy', 'Administration', 'Advertising', 'Aerospace%2FAviation%2FDefence', 'Agriculture', 'Architecture', 'Art%2FDesign%2FGraphics', 'Automotive', 'Banking']
+  Select 7: name="language" id="language" visible=False options=51 first_options=['EMPTY', 'Afrikaans', 'Albanian', 'Arabic', 'Basque', 'Bulgarian', 'Byelorussian', 'Cantonese', 'Catalan', 'Croatian']
+  Select 8: name="min_match" id="NO_ID" visible=False options=4 first_options=['0', '25', '50', '75']
+  Select 9: name="time" id="search-builder__time" visible=True options=11 first_options=['24 hours', '3 days', '7 days', '14 days', '28 days', '2 months', '3 months', '6 months', '1 year', '2 years']
+  Select 10: name="salary" id="NO_ID" visible=False options=12 first_options=['EMPTY', '1-10000', '10001-15000', '15001-20000', '20001-25000', '25001-30000', '30001-40000', '40001-60000', '60001-80000', '80001-100000']
+  Select 11: name="NO_NAME" id="salary-from" visible=False options=12 first_options=['EMPTY', '1', '10001', '15001', '20001', '25001', '30001', '40001', '60001', '80001']
+  Select 12: name="NO_NAME" id="salary-to" visible=False options=12 first_options=['EMPTY', '10000', '15000', '20000', '25000', '30000', '40000', '60000', '80000', '100000']
+  Select 13: name="type" id="search-builder__jobtype" visible=False options=5 first_options=['EMPTY', 'Permanent', 'Contract', 'Temporary', 'Part Time']
+  Select 14: name="industry" id="search-builder__industry" visible=False options=72 first_options=['EMPTY', 'Accountancy', 'Administration', 'Advertising', 'Aerospace%2FAviation%2FDefence', 'Agriculture', 'Architecture', 'Art%2FDesign%2FGraphics', 'Automotive', 'Banking']
+  Select 15: name="language" id="search-builder__language" visible=False options=50 first_options=['Afrikaans', 'Albanian', 'Arabic', 'Basque', 'Bulgarian', 'Byelorussian', 'Cantonese', 'Catalan', 'Croatian', 'Czech']
+  Select 16: name="min_match" id="NO_ID" visible=False options=4 first_options=['0', '25', '50', '75']
+  Select 17: name="min_match" id="min_match" visible=False options=4 first_options=['0', '25', '50', '75']
+  Select 18: name="sendwhen" id="sendwhen" visible=False options=4 first_options=['1', '10080', '1440', '60']
+  Select 19: name="jobspec" id="contact-selected-spec" visible=False options=1 first_options=['EMPTY']
+
+CHECKBOXES (18 found):
+  Checkbox 0: name="stem_phrases" id="expandPhrases" value="1" visible=False checked=False
+  Checkbox 1: name="query_field" id="jobtitleOnly" value="current_job_title" visible=False checked=False
+  Checkbox 2: name="cand_name_only" id="candnameOnly" value="0" visible=False checked=False
+  Checkbox 3: name="willing_to_relocate" id="relocate" value="1" visible=False checked=False
+  Checkbox 4: name="has_driving_licence" id="uklicence" value="1" visible=False checked=False
+  Checkbox 5: name="hide_recently_viewed_candidates" id="hide_recently_viewed_candidates" value="1" visible=False checked=False
+  Checkbox 6: name="query_field" id="search-builder__jobtitleOnly" value="current_job_title" visible=True checked=False
+  Checkbox 7: name="cand_name_only" id="search-builder__candnameOnly" value="0" visible=True checked=False
+  Checkbox 8: name="willing_to_relocate" id="search-builder__relocate" value="1" visible=True checked=False
+  Checkbox 9: name="has_driving_licence" id="search-builder__uklicence" value="1" visible=False checked=False
+  Checkbox 10: name="hide_recently_viewed_candidates" id="search-builder__hide-viewed-cvs" value="1" visible=False checked=False
+  Checkbox 11: name="ot-group-id-C0003" id="ot-group-id-C0003" value="on" visible=False checked=False
+  Checkbox 12: name="ot-group-id-C0002" id="ot-group-id-C0002" value="on" visible=False checked=False
+  Checkbox 13: name="ot-group-id-C0004" id="ot-group-id-C0004" value="on" visible=False checked=False
+  Checkbox 14: name="NO_NAME" id="chkbox-id" value="on" visible=False checked=False
+  Checkbox 15: name="NO_NAME" id="select-all-hosts-groups-handler" value="on" visible=False checked=False
+  Checkbox 16: name="NO_NAME" id="select-all-vendor-groups-handler" value="on" visible=False checked=False
+  Checkbox 17: name="NO_NAME" id="select-all-vendor-leg-handler" value="on" visible=False checked=False
