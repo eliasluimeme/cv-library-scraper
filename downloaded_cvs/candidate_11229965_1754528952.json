@@ -1,0 +1,58 @@
+{
+  "search_result": {
+    "cv_id": "11229965",
+    "name": "Glen Lavery",
+    "search_rank": 1,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/11229965?distance=10&enc_hl=24%3Aah6CxakLBx8_KZFAvTNJGd98rczqIUo_%3AbV9aytqY5zEpjN90qJ-6Dr-Kbxq1pDpmNXrAN1Y1PEO7owtBHM0o&enc_hl=24%3AJYsXrg-Jur2M7BdhdD11qJiDzJzcHIvf%3APR3Ua1o2P7aHvjiF45diGaselMzRtHpFDXjv-ZDbQygkzv74lPY&enc_hl=24%3A_v7_Tq70U3sUwWtKaB32nsRnvgJOfU3b%3Az2slDONTjLX1IOgDzk8WS4pn5OWocEdzQjcGQzM&enc_hl=24%3A53MUNi9wQdRD67JDrPlpTjSaGb1u6Bsu%3AZryZ_c67VCZNymUMTUn6GZmIFfj0ykCcVt_k&enc_hl=24%3AiWz5_gqCo4Xcg1ZI9yxygAVv4nD8xxvI%3ABTncZAmr7Gd94myUbfvf8RiMUz1MqqvW1Q&enc_hl=24%3AwHCqFHTpGZe_Y6QHskfEhkdoEAmy2c4q%3AH-ZDuUFLK9pxFnVwNWEGXLM2HVD-HBwoCw&enc_hl=24%3ALK9-7-AmfucTf3xAspBsGM1ltz3EZ3ei%3AD5dva3qKA9YSLkTPipypSBjYTgNv9A&enc_hl=24%3A9mdrUf507By7SZ8ePbFlx-GXvBfWvqfC%3ATtGrfCBE5QjSN5JavrZbbBdN_UI&enc_keywords=24%3AdiGBNZ7_I5txc9ubHJ0WHlKheulPQlBc%3AZpL3XH5cvH2rd7opaLTGeaZ1SfATDDd7LQZi3JbVp84E7VyuoD1G-KC0ceD4OW-zdkbEQTE-f4w&location=&sid=9e0ee1e4-8ada-4cd8-9f3c-23001fc7766e&stem_phrases=",
+    "profile_match_percentage": "100% Match",
+    "profile_cv_last_updated": "31/07/2025 11:09",
+    "last_viewed_date": "05/08/2025 (17:13)",
+    "search_keywords": [
+      "Test Developer"
+    ]
+  },
+  "candidate_info": {
+    "name": "Glen Lavery",
+    "quickview_ref": "11229965",
+    "date_registered": "17/11/2014",
+    "profile_last_updated": "31/07/2025 (11:09)",
+    "last_active": "31/07/2025 (11:09)",
+    "personal_job_details": {
+      "town": "London",
+      "county": "Greater London",
+      "location": "London, Greater London",
+      "main_phone": "07595593166",
+      "optional_phone": null,
+      "email": "glen@lavery.co.uk",
+      "current_job_title": "Web Developer",
+      "desired_job_title": "Python/Django Developer",
+      "job_type": "Contract, Part Time, Temporary",
+      "willing_to_travel": "Up to 10 miles",
+      "willing_to_relocate": "No",
+      "uk_driving_licence": "No",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£60,001 - £80,000"
+    },
+    "candidates_chosen_industries": [
+      "IT/Internet/Technical",
+      "Marketing & PR",
+      "Telecomms"
+    ],
+    "candidates_main_skills": [
+      "Developer",
+      "Python",
+      "Django",
+      "Git",
+      "Docker",
+      "HTML",
+      "CSS",
+      "Javascript",
+      "REST",
+      "API",
+      "3rd Line Application Support",
+      "processing of test results and their presentation",
+      "both development"
+    ]
+  }
+}

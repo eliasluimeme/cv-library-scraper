@@ -1,0 +1,54 @@
+{
+  "search_result": {
+    "cv_id": "10389823",
+    "name": "Victor Miron",
+    "search_rank": 1,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/10389823?distance=10&enc_hl=&enc_keywords=24%3AudwrxLdRRS8-BDTrHvqC6LV8_gP73Y3v%3A0sEoyXRdtbXeHpjuHekFEGQTL3dw95tleePSUKqauHA&location=&sid=5aae2700-6d1c-44d7-98c4-edc61fc19725&stem_phrases=",
+    "profile_match_percentage": "94% Match",
+    "profile_cv_last_updated": "11/07/2025 09:26",
+    "last_viewed_date": null,
+    "search_keywords": [
+      "Test Developer"
+    ]
+  },
+  "candidate_info": {
+    "name": "Victor Miron",
+    "quickview_ref": "10389823",
+    "date_registered": "21/09/2014",
+    "profile_last_updated": "11/07/2025 (09:26)",
+    "last_active": "11/07/2025 (11:56)",
+    "personal_job_details": {
+      "town": "Falmouth",
+      "county": "Cornwall",
+      "location": "Falmouth, Cornwall",
+      "main_phone": "0044739302971",
+      "optional_phone": "00447393029",
+      "email": "victormiron2000@yahoo.it",
+      "current_job_title": "Electronics Engineer",
+      "desired_job_title": "electronics, firmware",
+      "job_type": "Contract, Part Time, Temporary",
+      "willing_to_travel": "Up to 35 miles",
+      "willing_to_relocate": "Yes",
+      "uk_driving_licence": "Yes",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£80,001 - £100,000"
+    },
+    "candidates_chosen_industries": [
+      "Biotechnology",
+      "Electronic",
+      "Engineering"
+    ],
+    "candidates_main_skills": [
+      "Electronics PCB Test Developer Engineer",
+      "Altium PCB Designer",
+      "PCB Test development",
+      "Microcontrollers",
+      "PCB",
+      "Schematic Diagrams",
+      "Oscilloscopes",
+      "Circuit Diagrams",
+      "Analog and Digital Electronics"
+    ]
+  }
+}

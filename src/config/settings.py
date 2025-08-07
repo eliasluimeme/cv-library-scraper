@@ -128,6 +128,9 @@ class Settings:
         self.browser.headless = os.getenv('HEADLESS', 'true').lower() == 'true'
         self.browser.timeout = int(os.getenv('BROWSER_TIMEOUT', self.browser.timeout))
         
+        # Browser profile settings
+        self.browser.profile.profile_name = os.getenv('BROWSER_PROFILE', self.browser.profile.profile_name)
+        
         # Logging settings
         self.logging.log_level = os.getenv('LOG_LEVEL', self.logging.log_level)
         self.logging.log_to_file = os.getenv('LOG_TO_FILE', 'true').lower() == 'true'

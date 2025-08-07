@@ -1,0 +1,48 @@
+{
+  "search_result": {
+    "cv_id": "29449690",
+    "name": "Kashif Amin",
+    "search_rank": 1,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/29449690?distance=10&enc_hl=24%3AEsa1Cx_yyz-EtkhqbcuIV6XI0Kve9CBq%3Aps02Uh0M5oe0PeSruHNGe1Pe36bLkIfocRJLQ1JOVpiipoEsGscxRA&enc_hl=24%3A_n3BIBZNac4rn9oAsVFG_lICmduKsaFG%3ABi-rgt8Mnsz-QHW4hPtS46yKLegjl7WI_a10KB7srzUyTgAJ&enc_hl=24%3AKARBwulzq6fX51BC-M3zMhNs4NYn0HGg%3ATzQ8iAdQwtHYz0n7KERn-WPNLII4HEW2Zs6P3-ta_6nL&enc_hl=24%3AFTvioCfk6n1Q1lTLPrjRg7mjC9-8f1KB%3AsowP18alhCBGOZ1OoxiwDWYwQki8AHK3rV4&enc_hl=24%3AUOvz9AYwKeua6GqwUGjFif0a7DwDQyKF%3ADuR1Wv-DH6XvVeiK4do9mr-yJ8m6JwPo&enc_hl=24%3Ai4Mr5_tyB8zuvnJr37-eAEK-5ModfJtt%3Al5gBUen6nzumKT1iy6xyFv6kgy5Rxw&enc_keywords=24%3AgKNe5ukXdnP5wl_Nj4CQ0OLgpIHDob6_%3A51rNXKNJxlmVuqq9rPMKWKB1ERKYo7IMK8LmYvFq8SvzAwWwNQut6t7LF6EAB6JQCw2ZFDPQhT3kTA7Qx7T71sdUWhfNMyN3k0o1XCUPsZhH&location=&sid=90955904-1006-478c-81d7-a1031c82274d&stem_phrases=",
+    "profile_match_percentage": "100% Match",
+    "profile_cv_last_updated": "25/07/2025 11:59",
+    "last_viewed_date": "07/08/2025 (01:54)",
+    "search_keywords": [
+      "Senior Software Engineer",
+      "Python"
+    ]
+  },
+  "candidate_info": {
+    "name": "Kashif Amin",
+    "quickview_ref": "29449690",
+    "date_registered": "23/07/2025",
+    "profile_last_updated": "25/07/2025 (11:59)",
+    "last_active": "06/08/2025 (18:39)",
+    "personal_job_details": {
+      "town": "London",
+      "county": "Greater London",
+      "location": "London, Greater London",
+      "main_phone": "447309813443",
+      "optional_phone": "44730981344",
+      "email": "kashifamin817@gmail.com",
+      "current_job_title": "SENIOR SOFTWARE ENGINEER",
+      "desired_job_title": "Senior Software Engineer, Python Developer",
+      "job_type": "Contract, Part Time, Permanent",
+      "willing_to_travel": "Up to 10 miles",
+      "willing_to_relocate": "No",
+      "uk_driving_licence": "Yes",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£80,001 - £100,000"
+    },
+    "candidates_chosen_industries": [
+      "IT/Internet/Technical"
+    ],
+    "candidates_main_skills": [
+      "LLM",
+      "Azure",
+      "AWS",
+      "Docker"
+    ]
+  }
+}

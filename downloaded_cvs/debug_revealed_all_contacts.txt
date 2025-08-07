@@ -12,14 +12,14 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Pradeep K
-Quickview Ref# 29489465
-Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (13:19)   Last Active: 01/08/2025 (13:19)
+Kieran Park-Ward
+Quickview Ref# 29509697
+Date Registered: 06/08/2025   Profile/CV Last Updated: 07/08/2025 (17:06)   Last Active: 07/08/2025 (17:06)
 Personal & Job Details
 Town
-Thornaby-on-Tees
+Brighouse
 County
-North Yorkshire
+West Yorkshire
 Main Phone
 View contact details
 Optional Phone
@@ -31,35 +31,33 @@ N/A
 Date Available
 1 month
 Current Job Title
-Python Developer
+Engineering Planning Manager
 Desired Job Title
-N/A
+Engineering Manager
 Job Type
 Permanent
 Willing to Travel
-Anywhere
+Up to 35 miles
 Willing to Relocate
-Yes
+No
 UK Driving Licence
 Yes
 Expected Salary
 £40,001 - £60,000
 Candidates Chosen Industries
+Engineering
 IT/Internet/Technical
+Mechanical
 Candidates Main Skills
-Dashboards
-Best Practice
-Mentoring
-Troubleshooting
-Business Analytics
-Analytics
-Big Data technologies
-Communication Skills
-Exports
-Scheduling
-Stand-ups
-Python Programming
-ETL
+Managerial Skills > Team Management
+Strategic Planning
+Absence Management
+KPIs
+Lifting Equipment
+Capital Management
+Capital Projects
+Changing Beer Barrels
+Cleaning Beer Lines
 Recruiter Options
 Download CV
 Video Interview
@@ -71,296 +69,51 @@ to be Updated
 Print CV
 Report this CV
 
-Document
 Plain Text
 Notes
-The contact details in the CV below have been hidden View contact details
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Kieran Park-Ward
+View contact details, View contact details, West Yorkshire, View contact detailsPhone: View contact details | Email: View contact details of Birth: 14 July 1992
+Professional Summary
+Experienced and results-driven with over 10 years of progressive responsibility in engineering, maintenance planning, asset management, and operational leadership within manufacturing environments. Adept at leading cross-functional teams, managing CAPEX projects, driving continuous improvement initiatives, and ensuring full compliance with regulatory standards. Strong mechanical engineering and IT background with a strategic focus on reliability, cost control, and operational efficiency.
+Core Competencies
+- Engineering Leadership & People Management- Maintenance Planning & Asset Reliability- CAPEX Project Management- Health, Safety & Regulatory Compliance- Engineering Budget & Cost Control- Continuous Improvement (CI) & Lean Methodologies- Preventive & Predictive Maintenance (PM/PdM)- ERP & Engineering Stores Management- Stakeholder Engagement & Contractor Management- IT Support within Engineering Operations
+Professional Experience
+Marshalls Landscape Products
+Engineering Planning Manager & Stores Manager | 2014 – Present
+Lead a team of 5, overseeing engineering planning, maintenance scheduling, and spares inventory across a busy manufacturing site.
+Drive strategic planning to optimize asset reliability, safety, and performance across site-wide operations.
+Develop and maintain a site-wide preventive maintenance (PM) program, ensuring compliance with legal and insurance standards (e.g. LOLER, PUWER, LEV, Pressure Systems).
+Create and manage weekly engineering schedules to align resources with operational priorities and KPI targets.
+Manage engineering budget and track spend, consistently meeting cost-saving and efficiency goals.
+Lead end-to-end capital projects, from planning and procurement to installation and commissioning.
+Oversee contractor compliance, site safety protocols, and engineering documentation through effective use of Contractor Control Procedures.
+Conduct root cause analysis and asset performance tracking (e.g., MTBF, OEE) to drive data-driven decisions and improvements.
+Implement and maintain ERP-based engineering stores systems to ensure inventory accuracy and availability of critical spares.
+Provide IT support and troubleshooting at the site level, enhancing cross-departmental operations.
+• Previous Roles at Marshalls:
+Stores Controller | 2015 – 2016
+Transport Support | 2014 – 2015
+• Previous experience:
+The Armytage Arms Team Leader | 2012 – 2014
+Happy Haddock Assistant Manager | 2010 – 2012
+Education & Professional Development
+HNC in Mechanical Engineering – Kirklees College (2019 – 2021) — Merit
+ILM Level 5 Award in Leadership & Management (2018)
+IOSH Safe to Manage Certificate (2017)
+City & Guilds – Light Motor Vehicle Mechanics – Kirklees College (2010 – 2013) – Levels 1, 2, and 3 Completed
+BTec – Rastrick Sixth Form College (2008 – 2009): Business Studies – Merit, Health and Social Care – Distinction
+GCSEs – Rastrick High School (2003 – 2008): Maths: C, ICT: C/C, Science: C/C, English: D, D.T. Food: D, Art 3D: D
+Certifications & Licenses
+Counterbalance Forklift Truck (FLT) License
+Full UK Driving License – Car and Motorcycle
+Technical Skills
+ERP Systems (e.g., stock control, PM scheduling)
+Microsoft Excel & Data Analysis
+Engineering Drawing & Asset Mapping
+IT Troubleshooting
+Maintenance KPIs: OEE, MTBF, Downtime Tracking
+References
+Available upon request.
 Search CVs
 Search CVs Now
 Saved CVs
@@ -383,9 +136,6 @@ Follow us on Twitter
 Like our Facebook page
 Terms & Conditions    Privacy    Cookies    Recruitment Insight    Integrations    Partners
 © Copyright 2000 - 2025 CV-Library Ltd. All rights reserved
-Cookie Consent Settings
-We use cookies to enhance your experience, analyse site performance, and deliver personalised content and ads. You can manage your cookie preferences at any time by clicking ‘Cookie Consent Settings.’ Cookie Policy
-Cookies Settings Accept All Cookies
 
 === UPDATED CONTENT ===
 ___
@@ -401,53 +151,52 @@ Upgrade jobs
 ×
 Re-auth Social Posting
 ×
-Pradeep K
-Quickview Ref# 29489465
-Date Registered: 01/08/2025   Profile/CV Last Updated: 01/08/2025 (13:19)   Last Active: 01/08/2025 (13:19)
+Kieran Park-Ward
+Quickview Ref# 29509697
+Date Registered: 06/08/2025   Profile/CV Last Updated: 07/08/2025 (17:06)   Last Active: 07/08/2025 (17:06)
 Personal & Job Details
 Town
-Thornaby-on-Tees
+Brighouse
 County
-North Yorkshire
+West Yorkshire
 Main Phone
-+44 7353012177
+07926720921
 Optional Phone
+07790958476
 Email
-pradeep.kumark0476@gmail.com
+k.lpw@outlook.com
 Fluent Languages
 N/A
 Date Available
 1 month
 Current Job Title
-Python Developer
+Engineering Planning Manager
 Desired Job Title
-N/A
+Engineering Manager
 Job Type
 Permanent
 Willing to Travel
-Anywhere
+Up to 35 miles
 Willing to Relocate
-Yes
+No
 UK Driving Licence
 Yes
 Expected Salary
 £40,001 - £60,000
 Candidates Chosen Industries
+Engineering
 IT/Internet/Technical
+Mechanical
 Candidates Main Skills
-Dashboards
-Best Practice
-Mentoring
-Troubleshooting
-Business Analytics
-Analytics
-Big Data technologies
-Communication Skills
-Exports
-Scheduling
-Stand-ups
-Python Programming
-ETL
+Managerial Skills > Team Management
+Strategic Planning
+Absence Management
+KPIs
+Lifting Equipment
+Capital Management
+Capital Projects
+Changing Beer Barrels
+Cleaning Beer Lines
 Recruiter Options
 Download CV
 Video Interview
@@ -460,295 +209,51 @@ to be Updated
 Print CV
 Report this CV
 
-Document
 Plain Text
 Notes
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Kieran Park-Ward
+36 Castle Avenue, Brighouse, West Yorkshire, HD6 3HTPhone: 07926720921 | Email: k.lpw@outlook.comDate of Birth: 14 July 1992
+Professional Summary
+Experienced and results-driven with over 10 years of progressive responsibility in engineering, maintenance planning, asset management, and operational leadership within manufacturing environments. Adept at leading cross-functional teams, managing CAPEX projects, driving continuous improvement initiatives, and ensuring full compliance with regulatory standards. Strong mechanical engineering and IT background with a strategic focus on reliability, cost control, and operational efficiency.
+Core Competencies
+- Engineering Leadership & People Management- Maintenance Planning & Asset Reliability- CAPEX Project Management- Health, Safety & Regulatory Compliance- Engineering Budget & Cost Control- Continuous Improvement (CI) & Lean Methodologies- Preventive & Predictive Maintenance (PM/PdM)- ERP & Engineering Stores Management- Stakeholder Engagement & Contractor Management- IT Support within Engineering Operations
+Professional Experience
+Marshalls Landscape Products
+Engineering Planning Manager & Stores Manager | 2014 – Present
+Lead a team of 5, overseeing engineering planning, maintenance scheduling, and spares inventory across a busy manufacturing site.
+Drive strategic planning to optimize asset reliability, safety, and performance across site-wide operations.
+Develop and maintain a site-wide preventive maintenance (PM) program, ensuring compliance with legal and insurance standards (e.g. LOLER, PUWER, LEV, Pressure Systems).
+Create and manage weekly engineering schedules to align resources with operational priorities and KPI targets.
+Manage engineering budget and track spend, consistently meeting cost-saving and efficiency goals.
+Lead end-to-end capital projects, from planning and procurement to installation and commissioning.
+Oversee contractor compliance, site safety protocols, and engineering documentation through effective use of Contractor Control Procedures.
+Conduct root cause analysis and asset performance tracking (e.g., MTBF, OEE) to drive data-driven decisions and improvements.
+Implement and maintain ERP-based engineering stores systems to ensure inventory accuracy and availability of critical spares.
+Provide IT support and troubleshooting at the site level, enhancing cross-departmental operations.
+• Previous Roles at Marshalls:
+Stores Controller | 2015 – 2016
+Transport Support | 2014 – 2015
+• Previous experience:
+The Armytage Arms Team Leader | 2012 – 2014
+Happy Haddock Assistant Manager | 2010 – 2012
+Education & Professional Development
+HNC in Mechanical Engineering – Kirklees College (2019 – 2021) — Merit
+ILM Level 5 Award in Leadership & Management (2018)
+IOSH Safe to Manage Certificate (2017)
+City & Guilds – Light Motor Vehicle Mechanics – Kirklees College (2010 – 2013) – Levels 1, 2, and 3 Completed
+BTec – Rastrick Sixth Form College (2008 – 2009): Business Studies – Merit, Health and Social Care – Distinction
+GCSEs – Rastrick High School (2003 – 2008): Maths: C, ICT: C/C, Science: C/C, English: D, D.T. Food: D, Art 3D: D
+Certifications & Licenses
+Counterbalance Forklift Truck (FLT) License
+Full UK Driving License – Car and Motorcycle
+Technical Skills
+ERP Systems (e.g., stock control, PM scheduling)
+Microsoft Excel & Data Analysis
+Engineering Drawing & Asset Mapping
+IT Troubleshooting
+Maintenance KPIs: OEE, MTBF, Downtime Tracking
+References
+Available upon request.
 Search CVs
 Search CVs Now
 Saved CVs
@@ -771,6 +276,3 @@ Follow us on Twitter
 Like our Facebook page
 Terms & Conditions    Privacy    Cookies    Recruitment Insight    Integrations    Partners
 © Copyright 2000 - 2025 CV-Library Ltd. All rights reserved
-Cookie Consent Settings
-We use cookies to enhance your experience, analyse site performance, and deliver personalised content and ads. You can manage your cookie preferences at any time by clicking ‘Cookie Consent Settings.’ Cookie Policy
-Cookies Settings Accept All Cookies

@@ -1,0 +1,57 @@
+{
+  "search_result": {
+    "cv_id": "29513176",
+    "name": "Adrian Bobis",
+    "search_rank": 1,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/29513176?distance=10&enc_hl=24%3AUNsfEtf2iFDhU386YazPyqGwUmcNjhp8%3AdqAa8HYzD5H9GLvCZ7BDmHR2bvvafNvQUvJLragXpbKi3SgqFy_E&enc_hl=24%3AiBmJnuJNS70R73v7vEgjZz-y9Tp7N0sU%3ANZPrGW4FsZ4tXoeo-709lL7sIG2iIauAA3Pss6rcJvJnAmMCWQ&enc_hl=24%3Ao4dD_CGvUwDHfGYJ96DWg5lOWIxM3dQ9%3AEIudool27Mc94qSV1YzYxOSBLCIMMLjNS5wIE6RH-_1jjUN9lA&enc_hl=24%3A27Hrx-aUq4pBar_29JSHbjcny1zEcujH%3AZdpTW8Ix2yo4rF0uSXl4VKYyfEiMdHUVTPhl&enc_hl=24%3AQPU-jfkOmbPcKC9dd8zqWnSk8_8OBY08%3Ah4mcgswVlOCwI5dg1rLnreEMUoZsukcsSg&enc_hl=24%3A92H5UnJE4IBcMSFVjKAyvHfV6nQ4HBzx%3A7CTejgM2OhLZv41PyuslhzPiGBP1n7O0Pw&enc_hl=24%3AL2I63aiy19m9xm1carWC8nSMRFE5sG-C%3AOBkamBmx1s7a1jEtKSv-J-gMyDV1gG88ag&enc_hl=24%3ASjxIEuOYImRVYs5PkHnyTS0yEkL74Z12%3ADcf5V7D7GQN_mK8K_ppIDeRv4d2Gu1M&enc_hl=24%3AKgyZJ45RIAoc-qnRMv9d98rrUUVxQCS6%3ASUM9c7GsXS5M5GTzuLdgykRzfkzE0SA&enc_hl=24%3Ag8PPfqzq85kEAP6eRj5Cy8w9UXqy1a1Z%3Aswbn-3RlsHAU7eqPicdrNzgBaIo0jw&enc_hl=24%3AFuU2kjRSHu761kEnohEZ5RZtHsr1uaTr%3A7dJ3_xaFkfHJyGRA113CbloQCePK6w&enc_hl=24%3Acy-0Mjt8LNoyLfKLWVi_jZPH1qcPfJmq%3A3sLMtWRCqObwvZbXCaIALm4d3PfGVQ&enc_hl=24%3AO5wu3ltbpQ740RAf7fKRG2WXOqhWidWE%3AIZuQ2MiVqlxSXmnXhHemfCuManw&enc_keywords=24%3A0-_EtQNbXXgXgoEzC2o_NyfbpLlTjfPK%3AU3fKpxe4CDWa8UZtwa0PIjkzyclzqGjbmLFWJWRzz6_i5a5W-1-PH9r1D5YL6i9u-tn5xWonSOE&location=&sid=ed4e1e6f-672e-458e-81e7-e89babc298ba&stem_phrases=",
+    "profile_match_percentage": "100% Match",
+    "profile_cv_last_updated": "07/08/2025 11:28",
+    "last_viewed_date": "07/08/2025 (16:26)",
+    "search_keywords": [
+      "Test Developer"
+    ]
+  },
+  "candidate_info": {
+    "name": "Adrian Bobis",
+    "quickview_ref": "29513176",
+    "date_registered": "07/08/2025",
+    "profile_last_updated": "07/08/2025 (11:28)",
+    "last_active": "07/08/2025 (11:28)",
+    "personal_job_details": {
+      "town": "london",
+      "county": "Greater London",
+      "location": "london, Greater London",
+      "main_phone": "+44639605476271",
+      "optional_phone": "4463960547627",
+      "email": "adrianbobis.003@gmail.com",
+      "current_job_title": "Senior Full Stack Developer",
+      "desired_job_title": "Senior Full Stack Developer",
+      "job_type": "Permanent",
+      "willing_to_travel": "Up to 10 miles",
+      "willing_to_relocate": "No",
+      "uk_driving_licence": "Yes",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£15,001 - £20,000"
+    },
+    "candidates_chosen_industries": [
+      "IT/Internet/Technical"
+    ],
+    "candidates_main_skills": [
+      "Frontend Testing",
+      "Time Monitoring",
+      "User Experience",
+      "Analytics",
+      "system monitoring",
+      "end-user experience",
+      "PostgreSQL",
+      "Back End",
+      "Docker",
+      "Redis",
+      "API",
+      "Front End",
+      "Python Programming",
+      "SQLAlchemy"
+    ]
+  }
+}

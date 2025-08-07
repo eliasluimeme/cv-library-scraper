@@ -42,8 +42,8 @@ class SearchManager:
     SEARCH_BUTTON_SELECTOR = "button[type='submit'], input[type='submit'], .search-btn, button.btn-primary"
     
     # Results page selectors (updated for actual CV-Library structure)
-    RESULTS_CONTAINER_SELECTOR = ".search-result, .candidate-result, .result-row, tr"
-    RESULT_ITEM_SELECTOR = ".search-result, .candidate-result, .result-row"
+    RESULTS_CONTAINER_SELECTOR = ".search-result, .cvtablehl tbody tr:not(.cvtheader)"
+    RESULT_ITEM_SELECTOR = ".search-result"
     
     # Individual result selectors (cleaned up for CV-Library structure)
     CV_TITLE_SELECTOR = "h3 a, .candidate-name a, .result-title a, td a[href*='/cv/']"
@@ -656,54 +656,66 @@ class SearchManager:
             self.last_search_keywords = keywords
             self.last_search_location = location
             
-            self.logger.info("🔍 Starting CV search for keywords: %s", keywords)
-            
-            # STEP 1: Navigate directly to search page
+            # Create more specific keywords to avoid "search not specific enough" error
+            if keywords:
+                # Combine keywords into a search term
+                combined_keywords = " ".join(keywords)
+                self.logger.info(f"🔍 Using exact search terms: {combined_keywords}")
+            else:
+                self.logger.error("No keywords provided for search")
+                return False
+
+            # PERFORMANCE: Navigate to search page (single action)
             self.logger.info("Step 1: Navigating to search page")
             self.driver.get(self.SEARCH_URL)
             time.sleep(1)  # Reduced wait time
             
-            # STEP 2: Fill search form with comprehensive filters
+            # Handle cookie banner if present (NEW)
+            try:
+                cookie_selectors = [
+                    "#onetrust-accept-btn-handler",
+                    ".ot-sdk-show-settings", 
+                    "[data-testid='accept-all-cookies']",
+                    ".accept-cookies"
+                ]
+                
+                for selector in cookie_selectors:
+                    try:
+                        cookie_btn = self.driver.find_element(By.CSS_SELECTOR, selector)
+                        if cookie_btn.is_displayed():
+                            cookie_btn.click()
+                            self.logger.info("✅ Handled cookie banner")
+                            time.sleep(1)
+                            break
+                    except:
+                        continue
+            except:
+                pass  # No cookie banner or already handled
+
+            # PERFORMANCE: Fill search form (streamlined)
             self.logger.info("Step 2: Filling search form")
-            if not self._fill_search_form_streamlined(
-                keywords=keywords, 
-                location=location, 
-                salary_min=salary_min, 
-                salary_max=salary_max,
-                # Job and industry filters
-                job_type=job_type,
-                industry=industry,
-                # Location and timing filters
-                distance=distance,
-                time_period=time_period,
-                # Boolean filters
-                willing_to_relocate=willing_to_relocate,
-                uk_driving_licence=uk_driving_licence,
-                hide_recently_viewed=hide_recently_viewed,
-                # Advanced filters
-                languages=languages,
-                minimum_match=minimum_match,
-                sort_order=sort_order,
-                # Advanced keyword filters
-                must_have_keywords=must_have_keywords,
-                any_keywords=any_keywords,
-                none_keywords=none_keywords
-            ):
+            if not self._fill_search_form_streamlined(combined_keywords, location, salary_min, salary_max, 
+                                                    job_type, industry, distance, time_period,
+                                                    willing_to_relocate, uk_driving_licence, hide_recently_viewed,
+                                                    languages, minimum_match, sort_order,
+                                                    must_have_keywords, any_keywords, none_keywords):
+                self.logger.error("Failed to fill search form")
                 return False
-            
-            # STEP 3: Submit search (streamlined)
+
+            # PERFORMANCE: Submit search (ultra-fast)
             self.logger.info("Step 3: Submitting search")
             if not self._submit_search_streamlined():
+                self.logger.error("Failed to submit search")
                 return False
-                
+
             self.logger.info("✅ CV search completed successfully")
             return True
-            
+
         except Exception as e:
             self.logger.error(f"CV search failed: {e}")
             return False
     
-    def _fill_search_form_streamlined(self, keywords: List[str], location: Optional[str] = None,
+    def _fill_search_form_streamlined(self, keywords: str, location: Optional[str] = None,
                                     salary_min: Optional[int] = None, salary_max: Optional[int] = None,
                                     # Job and industry filters
                                     job_type: Optional[List[str]] = None, industry: Optional[List[str]] = None,
@@ -727,7 +739,7 @@ class SearchManager:
             # PERFORMANCE: Keywords first (most critical field)
             keywords_filled = False
             keyword_selectors = [
-                "input.boolean__input",          # Current working selector
+                "input.boolean__input",          # WORKING selector from debug
                 "input[name='keywords']",
                 "#keywords", 
                 ".keywords-input",
@@ -740,8 +752,8 @@ class SearchManager:
                     if keyword_input.is_displayed():
                         # Fast clear and fill
                         self.driver.execute_script("arguments[0].value = '';", keyword_input)
-                        keyword_input.send_keys(" ".join(keywords))
-                        self.logger.info(f"✅ Entered keywords: {' '.join(keywords)}")
+                        keyword_input.send_keys(keywords)
+                        self.logger.info(f"✅ Entered keywords: {keywords}")
                         keywords_filled = True
                         break
                 except:
@@ -813,68 +825,68 @@ class SearchManager:
             return False
 
     def _submit_search_streamlined(self) -> bool:
-        """PERFORMANCE OPTIMIZED: Ultra-fast search submission."""
+        """PERFORMANCE OPTIMIZED: Ultra-fast search submission with smart button detection."""
         try:
             self.logger.info("🚀 Turbo search submission...")
             
-            # PERFORMANCE: Reduced stabilization from 1s to 0.2s
-            time.sleep(0.2)
-            
-            search_submitted = False
-            
-            # PERFORMANCE: Optimized button detection (most likely first)
-            button_selectors = [
-                "input[type='submit'][value='View results']",  # After advanced options
-                "input[type='submit'][value='Find CV']",       # Basic search
-                "button[type='submit']:contains('View')",      # Generic View button
-                "button[type='submit']:contains('Find')",      # Generic Find button
-                "input[type='submit']",                        # Any submit button
-                "button[type='submit']"                        # Any submit button
+            # Smart button detection - find the most specific submit button
+            submit_selectors = [
+                "input[type='submit'][value='View results']",  # Most specific - exact button
+                "input[type='submit']",                        # Generic submit input
+                "button[type='submit']",                       # Submit button
+                ".search-btn",                                 # CSS class based
+                "button.btn-primary"                           # Bootstrap style
             ]
             
-            for i, selector in enumerate(button_selectors):
+            clicked = False
+            for selector in submit_selectors:
                 try:
-                    if ":contains(" in selector:
-                        # XPath approach for text-based selectors
-                        xpath_selector = f"//button[@type='submit'][contains(text(), '{selector.split(':contains(')[1][:-2]}')]"
-                        search_button = self.driver.find_element(By.XPATH, xpath_selector)
-                    else:
-                        search_button = self.driver.find_element(By.CSS_SELECTOR, selector)
-                    
-                    if search_button.is_displayed() and search_button.is_enabled():
-                        # PERFORMANCE: Direct click without extra checks
-                        search_button.click()
-                        button_name = "Advanced view results" if i == 0 else f"Button {i+1}"
-                        self.logger.info(f"🎯 Search launched: {button_name}")
-                        search_submitted = True
+                    submit_buttons = self.driver.find_elements(By.CSS_SELECTOR, selector)
+                    for i, button in enumerate(submit_buttons):
+                        if button.is_displayed() and button.is_enabled():
+                            # Use JavaScript click to avoid interception
+                            self.driver.execute_script("arguments[0].click();", button)
+                            
+                            # Determine button description for logging
+                            button_text = button.get_attribute('value') or button.text or f"Button {i+1}"
+                            self.logger.info(f"🎯 Search launched: {button_text}")
+                            clicked = True
+                            break
+                    if clicked:
                         break
-                        
                 except Exception as e:
-                    self.logger.debug(f"Button selector {i+1} failed: {e}")
+                    self.logger.debug(f"Submit selector failed: {selector} - {e}")
                     continue
             
-            if not search_submitted:
-                # PERFORMANCE: Fast JavaScript fallback
-                try:
-                    self.driver.execute_script("document.querySelector('input[type=submit], button[type=submit]').click();")
-                    self.logger.info("✅ Search launched (JS fallback)")
-                    search_submitted = True
-                except:
-                    pass
-            
-            if search_submitted:
-                # PERFORMANCE: Reduced navigation wait from 8s to 4s
-                WebDriverWait(self.driver, 4).until(
-                    lambda driver: "candidate-search" in driver.current_url or "results" in driver.current_url
-                )
-                self.logger.info(f"✅ Search completed: {self.driver.current_url}")
-                return True
-            else:
-                self.logger.error("❌ Could not submit search - no valid button found")
+            if not clicked:
+                self.logger.error("❌ Could not find or click any submit button")
                 return False
-                
+            
+            # CRITICAL: Wait for results to load completely
+            self.logger.info("⏳ Waiting for search results to load...")
+            time.sleep(5)  # Give more time for results to load
+            
+            # Wait for specific result indicators
+            wait = WebDriverWait(self.driver, 10)
+            try:
+                # Wait for either results to appear OR a "no results" message
+                wait.until(lambda driver: 
+                    driver.find_elements(By.CSS_SELECTOR, ".search-result") or 
+                    "no results" in driver.page_source.lower() or
+                    "no candidates found" in driver.page_source.lower()
+                )
+                self.logger.info("✅ Search results page loaded")
+            except Exception as e:
+                self.logger.warning(f"Timeout waiting for results, but continuing: {e}")
+            
+            # Verify we're on the results page
+            current_url = self.driver.current_url
+            self.logger.info(f"✅ Search completed: {current_url}")
+            
+            return True
+            
         except Exception as e:
-            self.logger.error(f"❌ Search submission failed: {e}")
+            self.logger.error(f"Search submission failed: {e}")
             return False
 
     def _wait_for_advanced_form_ready(self) -> bool:
@@ -1650,9 +1662,9 @@ class SearchManager:
                 
                 self.logger.info(f"📊 Page {current_page_num}: Added {results_added} results (total: {len(all_results)})")
                 
-                # Check if we have enough results
+                # Check if we have enough results (EARLY STOP OPTIMIZATION)
                 if target_results and len(all_results) >= target_results:
-                    self.logger.info(f"✅ Reached target of {target_results} results with {len(all_results)} candidates. Stopping pagination.")
+                    self.logger.info(f"✅ Early stop: Reached target of {target_results} results with {len(all_results)} candidates after {page_count} pages")
                     break
                 
                 # Edge case: Check if this page had no results (empty page)

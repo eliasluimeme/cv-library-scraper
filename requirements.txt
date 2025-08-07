@@ -3,7 +3,7 @@ selenium==4.15.2
 beautifulsoup4==4.12.2
 requests==2.31.0
 
-# Data processing and management - Updated for Python 3.13 compatibility
+# Data processing and management
 pandas>=2.2.0
 numpy>=1.26.0
 
@@ -28,4 +28,10 @@ webdriver-manager==4.0.1
 
 # Performance optimization dependencies
 psutil>=5.9.0         # Memory monitoring and system resource tracking
-typing-extensions>=4.0.0  # Enhanced type hints for optimization components 
+typing-extensions>=4.0.0  # Enhanced type hints for optimization components
+
+# FastAPI and API dependencies (essential only)
+fastapi>=0.100.0
+uvicorn>=0.20.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0 

@@ -102,10 +102,12 @@ class AuthenticationManager:
                     self.driver = None
             
             # Load session metadata silently
-            session_metadata = self.profile_manager.load_session_metadata()
+            profile_name = self.settings.browser.profile.profile_name
+            session_metadata = self.profile_manager.load_session_metadata(profile_name)
             
-            # Get browser options with persistent profile
-            options = self.profile_manager.create_chrome_options_with_profile("default")
+            # Get browser options with persistent profile from settings
+            options = self.profile_manager.create_chrome_options_with_profile(profile_name)
+            self.logger.info(f"Using browser profile from settings: {profile_name}")
             
             # Use cached ChromeDriver path (this should be fast now)
             driver_path = self._get_chromedriver_path()

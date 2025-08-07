@@ -1,0 +1,59 @@
+{
+  "search_result": {
+    "cv_id": "20173912",
+    "name": "Gregor Ambrozic",
+    "search_rank": 2,
+    "profile_url": "https://www.cv-library.co.uk/recruiter/cv/20173912?distance=10&enc_hl=24%3ALj-M4HZPur5rB4rLHd1Lh2tWal-1_XDJ%3AZAV3ApR7iyNWSzZC8wxerMVPiuraimEQMMBGC2mGkMssFyC1oUg&enc_hl=24%3AEmyp6Y0WLC4oi9NFaIFj6JvgCq8x7HyF%3AVu1VUQk_ZkjCy811jVEpOk9CRhCV-IIbAM05EKScFW9og3Xe&enc_hl=24%3AqOsuyrr2kgsJ2YZJ3VN7QcEfXYSdjUSa%3AOdWIZt89KlicIAY8NVFCHUGHUQwjpmDksJgIM0vx1S6Q&enc_hl=24%3AVlyfo-wncdXyopbxbKT6tbwroCAhxbx8%3A1uSRI1kuKek3_EKAmaJYGoJ5yi-mURjgJQGXZeo&enc_hl=24%3Aw4hC_AZcXW9M8kfpdluYjdHr5QxeSgZ1%3AXkUBAVSrVp3tejyklxBeZPnsa6-Zt_YUaw3e&enc_hl=24%3AHAPbPFEkv6i4oq4Dj0I6kbuT2JZlN6qp%3AgEtCRww1NsyT9VCXa-o05p_rS0EAQ0kuTHCF&enc_hl=24%3Aj5kL4ii5F4AA0BPt5y6b_YGDM81XCbVd%3AT_MdyMAeQWdhybR2XCf7cN1BA3MQLKA3&enc_hl=24%3AXYfTcIlXog4GxiwRn_UGJIJ1ExrS6JZt%3AprOVGKIBR5fzEM-HEKmGOUx0P_bahw&enc_keywords=24%3AgKNe5ukXdnP5wl_Nj4CQ0OLgpIHDob6_%3A51rNXKNJxlmVuqq9rPMKWKB1ERKYo7IMK8LmYvFq8SvzAwWwNQut6t7LF6EAB6JQCw2ZFDPQhT3kTA7Qx7T71sdUWhfNMyN3k0o1XCUPsZhH&location=&sid=90955904-1006-478c-81d7-a1031c82274d&stem_phrases=",
+    "profile_match_percentage": "100% Match",
+    "profile_cv_last_updated": "07/07/2025 10:57",
+    "last_viewed_date": "07/08/2025 (01:55)",
+    "search_keywords": [
+      "Senior Software Engineer",
+      "Python"
+    ]
+  },
+  "candidate_info": {
+    "name": "Gregor Ambrozic",
+    "quickview_ref": "20173912",
+    "date_registered": "23/01/2020",
+    "profile_last_updated": "07/07/2025 (10:57)",
+    "last_active": "28/07/2025 (08:03)",
+    "personal_job_details": {
+      "town": "London",
+      "county": "Greater London",
+      "location": "London, Greater London",
+      "main_phone": "07999578825",
+      "optional_phone": null,
+      "email": "ambrozic@gmail.com",
+      "current_job_title": "Senior Software Engineer",
+      "desired_job_title": "Senior Software Engineer",
+      "job_type": "Contract, Part Time, Permanent, Temporary",
+      "willing_to_travel": "Up to 20 miles",
+      "willing_to_relocate": "No",
+      "uk_driving_licence": "Yes",
+      "date_available": null,
+      "fluent_languages": [],
+      "expected_salary": "£120,001 - £1,000,000"
+    },
+    "candidates_chosen_industries": [
+      "IT/Internet/Technical"
+    ],
+    "candidates_main_skills": [
+      "Python",
+      "JavaScript",
+      "BackEnd",
+      "FrontEnd",
+      "Data Engineering",
+      "Django",
+      "Flask",
+      "React",
+      "Postgres",
+      "SQL",
+      "BigQuery",
+      "Airflow",
+      "Docker",
+      "Terraform",
+      "Google Cloud"
+    ]
+  }
+}

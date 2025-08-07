@@ -8,6 +8,7 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+import math
 
 from ..config.settings import Settings
 from ..models.cv_data import CVData
@@ -135,7 +136,7 @@ class CVLibraryScraper:
             self.logger.info(f"Starting CV search for keywords: {keywords}")
             
             # Perform the search with comprehensive filters
-            if self.search_manager.search_cvs(
+            search_success = self.search_manager.search_cvs(
                 keywords=keywords, 
                 location=location, 
                 salary_min=salary_min, 
@@ -158,74 +159,46 @@ class CVLibraryScraper:
                 must_have_keywords=must_have_keywords,
                 any_keywords=any_keywords,
                 none_keywords=none_keywords
-            ):
-                self.logger.info("Search form submitted successfully")
+            )
+            
+            # Phase 2: Collect search results with smart pagination
+            if search_success:
+                self.logger.info("🚀 Parsing search results with OPTIMIZED performance...")
                 
-                # Parse results from current page first
-                # Use optimized parsing for 75% speed improvement (6.5s -> 1.5s per page)
-                results = self.search_manager.parse_search_results_optimized() if hasattr(self.search_manager, 'parse_search_results_optimized') else self.search_manager.parse_search_results()
+                # SMART LOGIC: Only get what we need
+                first_page_results = self.search_manager.parse_search_results_optimized() if hasattr(self.search_manager, "parse_search_results_optimized") else self.search_manager.parse_search_results()
                 
-                # Get total available results for better decision making
-                total_available = getattr(self.search_manager, 'total_results', 0)
-                results_per_page = getattr(self.search_manager, 'results_per_page', len(results.results) or 20)
+                first_page_count = len(first_page_results.results)
+                self.logger.info(f"📊 First page results: {first_page_count} found")
                 
-                self.logger.info(f"📊 First page results: {len(results.results)} found")
-                if total_available > 0:
-                    self.logger.info(f"📊 Total available results: {total_available}")
+                # Get pagination info
+                total_available = self.search_manager._detect_total_pages() * 20  # Estimate
+                self.logger.info(f"📊 Total available results: {total_available}")
                 
-                # Determine if we need more pages
-                need_more_results = False
-                pagination_reason = ""
-                
-                if target_results:
-                    if len(results.results) < target_results:
-                        if total_available > 0 and total_available < target_results:
-                            # Edge case: Target exceeds available results
-                            self.logger.warning(f"⚠️  Target ({target_results}) exceeds available results ({total_available}). Will collect all available.")
-                            target_results = total_available
-                            need_more_results = len(results.results) < target_results
-                            pagination_reason = f"to collect all {total_available} available results"
-                        else:
-                            need_more_results = True
-                            pagination_reason = f"to reach target of {target_results} results"
-                    else:
-                        pagination_reason = f"target of {target_results} already met with {len(results.results)} results"
+                # SMART PAGINATION DECISION
+                if target_results and first_page_count >= target_results:
+                    # We have enough on first page - no need for more pages!
+                    self.logger.info(f"📄 Pagination decision: target of {target_results} already met with {first_page_count} results")
+                    self.logger.info(f"📊 No additional pages needed")
+                    results = first_page_results
                 elif max_pages > 1:
-                    need_more_results = True
-                    pagination_reason = f"max_pages ({max_pages}) allows multiple pages"
-                else:
-                    pagination_reason = "single page requested"
-                
-                self.logger.info(f"📄 Pagination decision: {pagination_reason}")
-                
-                # Get additional pages if needed
-                if need_more_results and results.results and self.search_manager.has_next_page():
-                    self.logger.info("🔄 Fetching additional pages...")
+                    # Need more pages, but be smart about it
+                    self.logger.info(f"📄 Pagination decision: max_pages ({max_pages}) allows multiple pages")
                     
                     if target_results:
-                        # Calculate pages needed more intelligently
-                        current_results = len(results.results)
-                        still_needed = target_results - current_results
-                        
-                        if results_per_page > 0:
-                            estimated_pages_needed = min(max_pages, (target_results + results_per_page - 1) // results_per_page)
-                            self.logger.info(f"📊 Estimated pages needed: {estimated_pages_needed} (based on {results_per_page} results per page)")
-                            self.logger.info(f"📊 Still need: {still_needed} more results")
-                        else:
-                            estimated_pages_needed = max_pages
-                            self.logger.warning(f"⚠️  Cannot estimate pages (results_per_page=0), using max_pages={max_pages}")
+                        # Calculate minimum pages needed
+                        pages_needed = math.ceil(target_results / max(first_page_count, 20))
+                        actual_max_pages = min(max_pages, pages_needed)
+                        self.logger.info(f"📊 Smart pagination: need {pages_needed} pages for {target_results} results, fetching max {actual_max_pages}")
                     else:
-                        estimated_pages_needed = max_pages
+                        actual_max_pages = max_pages
                     
-                    # Get all results across multiple pages with target limit
-                    all_results = self.search_manager.get_all_results(estimated_pages_needed, target_results)
-                    
-                    # The get_all_results method already includes the first page, so we use it directly
-                    results = all_results
-                elif not self.search_manager.has_next_page() and need_more_results:
-                    self.logger.info("📄 No additional pages available")
-                elif not need_more_results:
-                    self.logger.info("📊 No additional pages needed")
+                    self.logger.info("🔄 Fetching additional pages...")
+                    results = self.search_manager.get_all_results(max_pages=actual_max_pages, target_results=target_results)
+                else:
+                    # Single page only
+                    self.logger.info(f"📄 Single page mode: using {first_page_count} results from first page")
+                    results = first_page_results
                 
                 final_count = len(results.results)
                 

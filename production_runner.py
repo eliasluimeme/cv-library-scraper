@@ -9,6 +9,7 @@ import time
 import logging
 from typing import List, Optional
 from pathlib import Path
+import requests
 
 # Import production enhancements
 from src.config.production_settings import (
@@ -41,9 +42,24 @@ class ProductionCVScraper:
         # Apply production optimizations
         self._setup_production_environment()
         
+    def _check_api_server_status(self):
+        """Check if the API server is running and warn user."""
+        try:
+            response = requests.get("http://localhost:8000/", timeout=2)
+            if response.status_code == 200:
+                self.logger.warning("⚠️  API server detected running on localhost:8000")
+                self.logger.info("💡 Using separate browser profile to avoid conflicts")
+                return True
+        except requests.exceptions.RequestException:
+            pass
+        return False
+        
     def _setup_production_environment(self):
         """Setup production environment with optimizations."""
         self.logger.info("🚀 Setting up production environment...")
+        
+        # Check for running API server
+        api_running = self._check_api_server_status()
         
         # Configure production logging
         PRODUCTION_OPTIMIZER.setup_logging()
@@ -52,11 +68,18 @@ class ProductionCVScraper:
         os.environ['CV_SCRAPER_MODE'] = 'production'
         os.environ['BROWSER_HEADLESS'] = str(PRODUCTION_CONFIG.HEADLESS_PRODUCTION)
         
+        # Use unique profile to avoid conflicts with API server
+        profile_name = 'production_runner' if api_running else 'production_runner'
+        os.environ['BROWSER_PROFILE'] = profile_name
+        
         # Create output directories
         Path("downloaded_cvs").mkdir(exist_ok=True)
         Path("logs").mkdir(exist_ok=True)
         
         self.logger.info("✅ Production environment configured")
+        self.logger.info(f"🔧 Using browser profile: {profile_name}")
+        if api_running:
+            self.logger.info("🔄 Running alongside API server with separate profile")
         
     def run_production_session(self, keywords: List[str], 
                              location: Optional[str] = None,
